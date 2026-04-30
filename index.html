@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Miqyas — AI Construction Progress Tracking</title>
+<meta name="description" content="Upload a site video, BIM model, and schedule. Miqyas surfaces every deviation before it becomes a cost overrun." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400;1,6..72,600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #000000;
+  --bg2:     #080808;
+  --border:  rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.16);
+  --text:    #ffffff;
+  --muted:   #555555;
+  --mid:     #888888;
+  --card:    #0d0d0d;
+  --card2:   #141414;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; height: 56px;
+}
+/* ── LOGO ── */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+}
+.logo-mark { display: block; flex-shrink: 0; }
+.logo-word {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: inherit;
+  line-height: 1;
+}
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; transition: color 0.15s; }
+.nav-links a:hover { color: var(--text); }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-signin { color: var(--muted); text-decoration: none; font-size: 14px; transition: color 0.15s; }
+.nav-signin:hover { color: var(--text); }
+.nav-cta {
+  background: #fff; color: #000;
+  padding: 8px 18px; border-radius: 6px;
+  font-size: 14px; font-weight: 600; text-decoration: none; transition: opacity 0.15s;
+}
+.nav-cta:hover { opacity: 0.85; }
+
+/* ── HERO ── */
+.hero {
+  max-width: 760px; margin: 0 auto;
+  padding: 80px 24px 56px; text-align: center;
+}
+.hero-label {
+  font-size: 12px; font-weight: 500; color: var(--muted);
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: 'Newsreader', serif;
+  font-size: clamp(42px, 6vw, 72px);
+  font-weight: 600; line-height: 1.04; letter-spacing: -0.03em;
+  color: #fff; margin-bottom: 20px;
+}
+.hero h1 em { font-style: italic; color: rgba(255,255,255,0.55); }
+.hero-sub {
+  font-size: 18px; color: var(--muted); line-height: 1.65;
+  max-width: 540px; margin: 0 auto 36px; font-weight: 300;
+}
+.hero-cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+.btn-demo {
+  background: #fff; color: #000;
+  padding: 14px 32px; border-radius: 8px;
+  font-size: 16px; font-weight: 600; text-decoration: none;
+  transition: opacity 0.15s, transform 0.1s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-demo:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-sec {
+  color: var(--mid); padding: 14px 24px; border-radius: 8px;
+  font-size: 16px; text-decoration: none;
+  border: 1px solid var(--border2); transition: color 0.15s, border-color 0.15s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-sec:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+.hero-note { font-size: 12px; color: var(--muted); }
+
+/* ── 3D SCENE ── */
+.scene-wrap {
+  position: relative;
+  width: 100%; height: 600px;
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: #000;
+}
+#bim-canvas { display: block; width: 100%; height: 100%; }
+
+.scene-legend {
+  position: absolute; bottom: 20px; left: 24px;
+  background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 16px; display: flex; flex-direction: column; gap: 7px;
+  pointer-events: none;
+}
+.legend-row { display: flex; align-items: center; gap: 9px; font-size: 11px; color: var(--mid); }
+.legend-sq { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+
+.scene-hint {
+  position: absolute; bottom: 20px; right: 24px;
+  font-size: 11px; color: rgba(255,255,255,0.2);
+  pointer-events: none; letter-spacing: 0.03em;
+}
+
+.scene-tooltip {
+  position: absolute; pointer-events: none;
+  background: rgba(0,0,0,0.9); backdrop-filter: blur(8px);
+  border: 1px solid var(--border2); border-radius: 6px;
+  padding: 8px 14px; font-size: 12px; color: #fff;
+  white-space: nowrap; display: none;
+  z-index: 10;
+}
+.scene-tooltip strong { display: block; font-weight: 600; margin-bottom: 2px; }
+.scene-tooltip span { color: var(--mid); font-size: 11px; }
+
+.scene-panel {
+  position: absolute; top: 20px; right: 24px;
+  width: 260px; background: rgba(0,0,0,0.92); backdrop-filter: blur(12px);
+  border: 1px solid var(--border2); border-radius: 10px;
+  padding: 20px; display: none; z-index: 10;
+  transform: translateX(20px); opacity: 0;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.scene-panel.open { display: block; transform: translateX(0); opacity: 1; }
+.panel-close {
+  position: absolute; top: 12px; right: 14px;
+  background: none; border: none; color: var(--muted);
+  font-size: 16px; cursor: pointer; line-height: 1; padding: 2px 4px;
+}
+.panel-close:hover { color: #fff; }
+.panel-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 16px; padding-right: 20px; line-height: 1.4; }
+.panel-field { margin-bottom: 12px; }
+.panel-label { font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+.panel-value { font-size: 13px; color: #ddd; }
+.panel-bar-bg { height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-top: 5px; }
+.panel-bar-fill { height: 100%; border-radius: 2px; background: #fff; }
+.status-chip {
+  display: inline-block; font-size: 10px; padding: 2px 8px;
+  border-radius: 4px; border: 1px solid; font-weight: 500; letter-spacing: 0.04em;
+}
+.chip-behind { color: #fff; border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.1); }
+.chip-on_track { color: #888; border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); }
+.chip-ahead { color: #aaa; border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
+.chip-not_started { color: #444; border-color: rgba(255,255,255,0.08); background: transparent; }
+.panel-rfi-btn {
+  display: block; margin-top: 16px; padding: 9px;
+  border: 1px solid var(--border2); border-radius: 6px;
+  color: #fff; font-size: 12px; font-weight: 500; text-align: center;
+  text-decoration: none; transition: background 0.15s;
+  background: rgba(255,255,255,0.04); cursor: pointer;
+}
+.panel-rfi-btn:hover { background: rgba(255,255,255,0.1); }
+
+/* ── DIVIDER ── */
+hr { border: none; border-top: 1px solid var(--border); }
+
+/* ── SECTIONS ── */
+.section { padding: 80px 24px; }
+.section-narrow { max-width: 680px; margin: 0 auto; }
+.section-wide   { max-width: 960px; margin: 0 auto; }
+.section-full   { max-width: 1100px; margin: 0 auto; }
+.section-label {
+  font-size: 12px; font-weight: 500; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px;
+}
+.section h2 {
+  font-family: 'Newsreader', serif;
+  font-size: clamp(30px, 3.5vw, 44px);
+  font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; color: #fff; margin-bottom: 12px;
+}
+.section h2 em { font-style: italic; color: rgba(255,255,255,0.5); }
+.section-body { font-size: 17px; color: var(--muted); line-height: 1.7; }
+
+/* Problem */
+.problem-cols {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 56px;
+}
+.problem-col {
+  padding: 36px 32px; border-right: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.problem-col:last-child { border-right: none; }
+.problem-col:hover { background: var(--card); }
+.prob-num { font-size: 11px; font-weight: 500; color: var(--muted); margin-bottom: 16px; }
+.problem-col h3 { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 8px; line-height: 1.35; }
+.problem-col p  { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  background: var(--card); margin-top: 24px;
+}
+.stat-col { padding: 36px 32px; border-right: 1px solid var(--border); }
+.stat-col:last-child { border-right: none; }
+.stat-num {
+  font-family: 'Newsreader', serif; font-size: 48px; font-weight: 600;
+  color: #fff; line-height: 1; letter-spacing: -0.02em; margin-bottom: 8px;
+}
+.stat-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* How it works */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; margin-top: 56px; }
+.step-num   { font-size: 11px; font-weight: 500; color: var(--muted); margin-bottom: 14px; }
+.step-title { font-size: 17px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+.step-body  { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 14px; }
+.step-tags  { display: flex; flex-wrap: wrap; gap: 6px; }
+.step-tag {
+  font-size: 11px; color: var(--muted);
+  border: 1px solid var(--border); padding: 3px 8px; border-radius: 4px;
+}
+
+/* Features */
+.features {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 56px;
+}
+.feature {
+  padding: 40px 36px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.feature:hover { background: var(--card); }
+.feature:nth-child(2n) { border-right: none; }
+.feature:nth-child(3), .feature:nth-child(4) { border-bottom: none; }
+.feature-icon { font-size: 22px; margin-bottom: 16px; }
+.feature h3   { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+.feature p    { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+/* Testimonials */
+.testimonials { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 56px; }
+.testimonial {
+  border: 1px solid var(--border); border-radius: 10px; padding: 28px; background: var(--card);
+  display: flex; flex-direction: column; gap: 20px; transition: border-color 0.15s;
+}
+.testimonial:hover { border-color: var(--border2); }
+.t-quote { font-family: 'Newsreader', serif; font-size: 16px; font-style: italic; color: #ddd; line-height: 1.6; flex: 1; }
+.t-divider { border: none; border-top: 1px solid var(--border); }
+.t-name { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+.t-role { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+.t-stats { display: flex; gap: 20px; }
+.t-stat-val { font-family: 'Newsreader', serif; font-size: 22px; font-weight: 600; color: #fff; }
+.t-stat-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* Pricing */
+.pricing-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  max-width: 900px; margin: 56px auto 0;
+}
+.pricing-card {
+  border: 1px solid var(--border); border-radius: 10px; padding: 32px 28px;
+  background: var(--card); display: flex; flex-direction: column; transition: border-color 0.15s;
+}
+.pricing-card:hover { border-color: var(--border2); }
+.pricing-card.featured { border-color: rgba(255,255,255,0.3); background: #fff; color: #000; }
+.pricing-tier { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 10px; }
+.pricing-card.featured .pricing-tier { color: #888; }
+.pricing-price { font-family: 'Newsreader', serif; font-size: 42px; font-weight: 600; color: #fff; line-height: 1; margin-bottom: 4px; }
+.pricing-price sup { font-size: 20px; vertical-align: super; }
+.pricing-card.featured .pricing-price { color: #000; }
+.pricing-period { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+.pricing-card.featured .pricing-period { color: #666; }
+.pricing-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+.pricing-card.featured .pricing-desc { color: #555; }
+.pricing-line { border: none; border-top: 1px solid var(--border); margin-bottom: 18px; }
+.pricing-card.featured .pricing-line { border-color: #e5e5e5; }
+.pricing-feats { list-style: none; display: flex; flex-direction: column; gap: 8px; flex: 1; margin-bottom: 24px; }
+.pricing-feat { font-size: 13px; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
+.pricing-feat::before { content: "✓"; flex-shrink: 0; }
+.pricing-card.featured .pricing-feat { color: #444; }
+.p-cta {
+  display: block; text-align: center; padding: 11px; border-radius: 7px;
+  font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.15s;
+}
+.p-cta-dark { border: 1px solid var(--border2); color: #fff; }
+.p-cta-dark:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.04); }
+.p-cta-black { background: #000; color: #fff; font-weight: 600; }
+.p-cta-black:hover { opacity: 0.85; }
+.popular-tag {
+  font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em;
+  background: rgba(0,0,0,0.1); color: #666;
+  padding: 2px 6px; border-radius: 3px; margin-left: 8px; vertical-align: middle;
+}
+
+/* FAQ */
+.faq-list {
+  display: grid; grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 56px;
+}
+.faq-item { padding: 28px 32px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); transition: background 0.15s; }
+.faq-item:hover { background: var(--card); }
+.faq-item:nth-child(2n) { border-right: none; }
+.faq-item:nth-last-child(-n+2) { border-bottom: none; }
+.faq-q { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+.faq-a { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+/* CTA */
+.cta-section {
+  background: #fff; color: #000; padding: 100px 24px; text-align: center;
+}
+.cta-section h2 {
+  font-family: 'Newsreader', serif;
+  font-size: clamp(36px, 5vw, 58px); font-weight: 600; color: #000;
+  letter-spacing: -0.025em; line-height: 1.08; margin-bottom: 16px;
+}
+.cta-section h2 em { font-style: italic; color: #aaa; }
+.cta-section p { font-size: 17px; color: #666; max-width: 420px; margin: 0 auto 40px; }
+.cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-cta-black {
+  background: #000; color: #fff; padding: 14px 32px; border-radius: 8px;
+  font-size: 16px; font-weight: 600; text-decoration: none; transition: opacity 0.15s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-cta-black:hover { opacity: 0.82; }
+.btn-cta-outline {
+  color: #555; padding: 14px 24px; border-radius: 8px; font-size: 16px;
+  text-decoration: none; border: 1px solid #ddd; transition: all 0.15s;
+}
+.btn-cta-outline:hover { color: #000; border-color: #999; }
+.cta-note { font-size: 13px; color: #aaa; margin-top: 20px; }
+
+/* Footer */
+footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
+.footer-inner { max-width: 1100px; margin: 0 auto; }
+.footer-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding-bottom: 40px; border-bottom: 1px solid var(--border); margin-bottom: 28px;
+}
+.footer-logo { opacity: 0.45; }
+.footer-tagline { font-size: 13px; color: var(--muted); margin-top: 10px; max-width: 200px; line-height: 1.5; }
+.footer-cols { display: grid; grid-template-columns: repeat(3, 130px); gap: 0 40px; }
+.footer-col-title { font-size: 12px; font-weight: 600; color: #fff; margin-bottom: 12px; }
+.footer-col { display: flex; flex-direction: column; gap: 10px; }
+.footer-col a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+.footer-col a:hover { color: #fff; }
+.footer-bottom { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+
+/* Responsive */
+@media (max-width: 860px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .problem-cols, .stats-row, .steps, .features, .testimonials, .pricing-grid, .faq-list { grid-template-columns: 1fr; }
+  .problem-col, .stat-col, .feature { border-right: none; }
+  .feature:nth-child(n) { border-right: none; border-bottom: 1px solid var(--border); }
+  .feature:last-child { border-bottom: none; }
+  .faq-item:nth-child(n) { border-right: none; border-bottom: 1px solid var(--border); }
+  .faq-item:last-child { border-bottom: none; }
+  .footer-top { flex-direction: column; gap: 40px; }
+  .footer-cols { grid-template-columns: repeat(2, 1fr); }
+  .footer-bottom { flex-direction: column; gap: 8px; }
+  .scene-wrap { height: 400px; }
+  .scene-panel { width: 220px; }
+}
+@media (max-width: 560px) {
+  .hero-cta-row { flex-direction: column; }
+  .btn-demo, .btn-sec { width: 100%; justify-content: center; }
+  .scene-legend { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <svg class="logo-mark" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0"  y="0"  width="10" height="10" rx="2" fill="white"/>
+      <rect x="14" y="0"  width="10" height="10" rx="2" fill="white" opacity="0.2"/>
+      <rect x="0"  y="14" width="10" height="10" rx="2" fill="white" opacity="0.2"/>
+      <rect x="14" y="14" width="10" height="10" rx="2" fill="white" opacity="0.55"/>
+    </svg>
+    <span class="logo-word">MIQYAS</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="https://miqyas-omega.vercel.app/" class="nav-signin" target="_blank">Sign in</a>
+    <a href="https://miqyas-omega.vercel.app/" class="nav-cta" target="_blank">Request Demo</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">AI Construction Analytics</div>
+  <h1>See your delays<br><em>before they happen</em></h1>
+  <p class="hero-sub">Upload a 360° site video, your IFC model, and your P6 schedule. Miqyas compares reality to plan and surfaces every deviation — automatically.</p>
+  <div class="hero-cta-row">
+    <a href="https://miqyas-omega.vercel.app/" class="btn-demo" target="_blank">Request Demo →</a>
+    <a href="#how" class="btn-sec">See how it works</a>
+  </div>
+  <p class="hero-note">No credit card · Setup in minutes · Works with IFC + Primavera P6</p>
+</div>
+
+<!-- 3D BIM SCENE -->
+<div class="scene-wrap">
+  <canvas id="bim-canvas"></canvas>
+
+  <div id="tooltip" class="scene-tooltip">
+    <strong id="tt-name"></strong>
+    <span id="tt-status"></span>
+  </div>
+
+  <div id="panel" class="scene-panel">
+    <button class="panel-close" onclick="closePanel()">✕</button>
+    <div class="panel-title" id="p-title"></div>
+    <div class="panel-field">
+      <div class="panel-label">Status</div>
+      <div id="p-status"></div>
+    </div>
+    <div class="panel-field" id="p-iou-wrap">
+      <div class="panel-label">IoU Score</div>
+      <div class="panel-value" id="p-iou"></div>
+      <div class="panel-bar-bg"><div class="panel-bar-fill" id="p-iou-bar"></div></div>
+    </div>
+    <div class="panel-field" id="p-conf-wrap">
+      <div class="panel-label">Confidence</div>
+      <div class="panel-value" id="p-conf"></div>
+      <div class="panel-bar-bg"><div class="panel-bar-fill" id="p-conf-bar" style="opacity:0.6"></div></div>
+    </div>
+    <div class="panel-field">
+      <div class="panel-label">Activity</div>
+      <div class="panel-value" id="p-activity"></div>
+    </div>
+    <div class="panel-field">
+      <div class="panel-label">Scheduled</div>
+      <div class="panel-value" id="p-sched"></div>
+    </div>
+    <div class="panel-field">
+      <div class="panel-label">Critical Path</div>
+      <div class="panel-value" id="p-crit"></div>
+    </div>
+    <div class="panel-field" id="p-rec-wrap">
+      <div class="panel-label">Recommendation</div>
+      <div class="panel-value" id="p-rec" style="font-size:12px;color:#666;line-height:1.5"></div>
+    </div>
+    <a href="https://miqyas-omega.vercel.app/" class="panel-rfi-btn" target="_blank">Open in Miqyas →</a>
+  </div>
+
+  <div class="scene-legend">
+    <div class="legend-row"><div class="legend-sq" style="background:#fff"></div>Behind schedule</div>
+    <div class="legend-row"><div class="legend-sq" style="background:#888"></div>On track</div>
+    <div class="legend-row"><div class="legend-sq" style="background:#bbb"></div>Ahead</div>
+    <div class="legend-row"><div class="legend-sq" style="background:#222;border:1px dashed #444"></div>Not started</div>
+  </div>
+  <div class="scene-hint">Drag to orbit · Scroll to zoom · Click a floor to inspect</div>
+</div>
+
+<!-- PROBLEM -->
+<hr />
+<div class="section" style="background:var(--bg2)">
+  <div class="section-full">
+    <div class="section-narrow" style="margin-bottom:0">
+      <div class="section-label">The Problem</div>
+      <h2>Construction projects fail<br>on <em>information delay</em></h2>
+    </div>
+    <div class="problem-cols">
+      <div class="problem-col">
+        <div class="prob-num">01</div>
+        <h3>You find out weeks too late</h3>
+        <p>By the time a delay surfaces in a progress meeting, the critical path has already slipped. Recovery costs 3–5× what prevention would have.</p>
+      </div>
+      <div class="problem-col">
+        <div class="prob-num">02</div>
+        <h3>Site walks can't scale</h3>
+        <p>A PM visiting every floor, every trade, every week is impossible on large sites. Coverage gaps are where delays hide.</p>
+      </div>
+      <div class="problem-col">
+        <div class="prob-num">03</div>
+        <h3>BIM and schedule live in separate worlds</h3>
+        <p>The model says the floor is done. The schedule says on track. The site says otherwise. No automated link exists between them.</p>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-col">
+        <div class="stat-num">89%</div>
+        <div class="stat-desc">of large construction projects exceed budget or timeline.</div>
+      </div>
+      <div class="stat-col">
+        <div class="stat-num">$1.6T</div>
+        <div class="stat-desc">lost annually to construction productivity gaps globally.</div>
+      </div>
+      <div class="stat-col">
+        <div class="stat-num">3–5×</div>
+        <div class="stat-desc">the cost to fix a deviation discovered late versus one caught early.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<hr />
+<div class="section" id="how">
+  <div class="section-full">
+    <div class="section-narrow" style="margin-bottom:0">
+      <div class="section-label">How It Works</div>
+      <h2>Capture. Analyze. <em>Act.</em></h2>
+      <p class="section-body">Three inputs. One automated pipeline. No manual reconciliation.</p>
+    </div>
+    <div class="steps">
+      <div>
+        <div class="step-num">01 — Capture</div>
+        <div class="step-title">Walk the site with a 360° camera</div>
+        <p class="step-body">Upload the video alongside your IFC BIM model and Primavera P6 schedule. No special equipment or configuration needed.</p>
+        <div class="step-tags"><span class="step-tag">360° Video</span><span class="step-tag">IFC / BIM</span><span class="step-tag">P6 XER / XML</span></div>
+      </div>
+      <div>
+        <div class="step-num">02 — Analyze</div>
+        <div class="step-title">AI compares reality to plan</div>
+        <p class="step-body">Miqyas extracts frames, reconstructs camera poses via COLMAP, and runs Mask2Former segmentation against your BIM model.</p>
+        <div class="step-tags"><span class="step-tag">COLMAP</span><span class="step-tag">Mask2Former</span><span class="step-tag">IoU Compare</span></div>
+      </div>
+      <div>
+        <div class="step-num">03 — Act</div>
+        <div class="step-title">Reports and Procore RFIs</div>
+        <p class="step-body">Per-element deviation reports with critical path impact. Push directly to Procore as RFIs or export as PDF for the owner meeting.</p>
+        <div class="step-tags"><span class="step-tag">PDF Reports</span><span class="step-tag">Procore RFI</span><span class="step-tag">Critical Path</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<hr />
+<div class="section" id="features" style="background:var(--bg2)">
+  <div class="section-full">
+    <div class="section-narrow" style="margin-bottom:0">
+      <div class="section-label">Features</div>
+      <h2>Everything a PM needs.<br><em>Nothing they don't.</em></h2>
+    </div>
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">🔍</div>
+        <h3>AI Deviation Detection</h3>
+        <p>Mask2Former identifies elements across 13 construction categories. IoU scoring flags behind, ahead, and not-started elements automatically — no manual annotations.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📅</div>
+        <h3>Critical Path Analysis</h3>
+        <p>Deviations are cross-referenced with your P6 schedule. A delay on a float-rich beam is noise. The same delay on the core wall is a crisis. We tell you which is which.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🏗️</div>
+        <h3>Interactive 3D BIM Viewer</h3>
+        <p>Real IFC geometry in Three.js — not bounding boxes. Click any element to inspect IoU score, deviation status, and linked schedule activity. Toggle by level or category.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔗</div>
+        <h3>Procore Integration</h3>
+        <p>OAuth2 connect, configure field mapping once, then bulk-push deviations as RFIs or Issues in one click. Full audit trail on both sides.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<hr />
+<div class="section" id="proof">
+  <div class="section-full">
+    <div class="section-narrow" style="margin-bottom:0">
+      <div class="section-label">Case Studies</div>
+      <h2>Trusted on <em>real projects</em></h2>
+    </div>
+    <div class="testimonials">
+      <div class="testimonial">
+        <p class="t-quote">"We caught a 6-day structural steel slip on Level 4 before the concrete pour. That one catch paid for the platform for six months."</p>
+        <hr class="t-divider" />
+        <div class="t-name">Amir Hassan</div>
+        <div class="t-role">Site Manager · High-rise residential, Dubai</div>
+        <div class="t-stats">
+          <div><div class="t-stat-val">6d</div><div class="t-stat-lbl">Slip caught early</div></div>
+          <div><div class="t-stat-val">$340K</div><div class="t-stat-lbl">Estimated saving</div></div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <p class="t-quote">"Our investors used to wait for monthly PDFs. Now they have a live 3D viewer. The conversations are completely different."</p>
+        <hr class="t-divider" />
+        <div class="t-name">Leila Petrova</div>
+        <div class="t-role">Project Director · Mixed-use development</div>
+        <div class="t-stats">
+          <div><div class="t-stat-val">12h</div><div class="t-stat-lbl">Report prep cut</div></div>
+          <div><div class="t-stat-val">174</div><div class="t-stat-lbl">Elements tracked</div></div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <p class="t-quote">"We pushed 23 RFIs to Procore directly from the deviation report. No copy-paste, no missed items. The audit trail alone is worth it."</p>
+        <hr class="t-divider" />
+        <div class="t-name">Tom Reyes</div>
+        <div class="t-role">QA Lead · Infrastructure contractor</div>
+        <div class="t-stats">
+          <div><div class="t-stat-val">23</div><div class="t-stat-lbl">RFIs auto-created</div></div>
+          <div><div class="t-stat-val">0</div><div class="t-stat-lbl">Manual entries</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<hr />
+<div class="section" id="pricing" style="background:var(--bg2);text-align:center">
+  <div class="section-full">
+    <div class="section-label">Pricing</div>
+    <h2>Simple, project-based pricing</h2>
+    <p class="section-body" style="max-width:380px;margin:0 auto">No seat fees. No hidden costs. Cancel anytime.</p>
+    <div class="pricing-grid" style="text-align:left">
+      <div class="pricing-card">
+        <div class="pricing-tier">Starter</div>
+        <div class="pricing-price"><sup>$</sup>490</div>
+        <div class="pricing-period">/ month · 1 project</div>
+        <div class="pricing-desc">For contractors running a single project who need automated deviation detection.</div>
+        <hr class="pricing-line" />
+        <ul class="pricing-feats">
+          <li class="pricing-feat">1 active project</li>
+          <li class="pricing-feat">BIM + Schedule upload (IFC + XER)</li>
+          <li class="pricing-feat">4 captures per month</li>
+          <li class="pricing-feat">AI deviation detection</li>
+          <li class="pricing-feat">PDF reports · 3D BIM viewer</li>
+        </ul>
+        <a href="https://miqyas-omega.vercel.app/" class="p-cta p-cta-dark" target="_blank">Get started</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-tier">Pro <span class="popular-tag">POPULAR</span></div>
+        <div class="pricing-price"><sup>$</sup>1,490</div>
+        <div class="pricing-period">/ month · up to 5 projects</div>
+        <div class="pricing-desc">For firms running multiple sites and reporting to investor stakeholders.</div>
+        <hr class="pricing-line" />
+        <ul class="pricing-feats">
+          <li class="pricing-feat">Up to 5 active projects</li>
+          <li class="pricing-feat">Unlimited captures</li>
+          <li class="pricing-feat">Procore OAuth2 integration</li>
+          <li class="pricing-feat">Bulk RFI / Issue push</li>
+          <li class="pricing-feat">Executive dashboard</li>
+          <li class="pricing-feat">GPU-accelerated inference</li>
+        </ul>
+        <a href="https://miqyas-omega.vercel.app/" class="p-cta p-cta-black" target="_blank">Request Demo</a>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-tier">Enterprise</div>
+        <div class="pricing-price" style="font-size:34px;padding-top:4px">Custom</div>
+        <div class="pricing-period">unlimited projects</div>
+        <div class="pricing-desc">For large contractors managing portfolio-scale programs across multiple sites.</div>
+        <hr class="pricing-line" />
+        <ul class="pricing-feats">
+          <li class="pricing-feat">Unlimited projects + GPU</li>
+          <li class="pricing-feat">On-premise deployment option</li>
+          <li class="pricing-feat">Custom Procore field mapping</li>
+          <li class="pricing-feat">SLA + priority support</li>
+          <li class="pricing-feat">SSO + audit logging</li>
+        </ul>
+        <a href="mailto:hello@miqyas.io" class="p-cta p-cta-dark">Talk to sales</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<hr />
+<div class="section" id="faq">
+  <div class="section-full">
+    <div class="section-narrow" style="margin-bottom:0">
+      <div class="section-label">FAQ</div>
+      <h2>Common questions</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q">What BIM formats do you support?</div>
+        <div class="faq-a">Any valid IFC 2x3 or IFC 4 file via IfcOpenShell. Revit, ArchiCAD, Tekla, Navisworks — if it exports IFC, it works.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do I need a 360° camera specifically?</div>
+        <div class="faq-a">360° gives the best per-walk coverage, but the pipeline accepts standard video. More frame overlap = higher IoU confidence scores.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How long does analysis take after upload?</div>
+        <div class="faq-a">Typically 15–40 minutes. Frame extraction, COLMAP, segmentation, and comparison run in parallel via GPU workers. You get notified when done.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How does the Procore integration work?</div>
+        <div class="faq-a">Connect via OAuth2 (under 2 minutes). Map fields once. Then bulk-push any deviation report to Procore as RFIs with a full audit trail.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What schedule formats are supported?</div>
+        <div class="faq-a">Primavera P6 XER and XML. Parser reads PROJECT, PROJWBS, TASK, TASKPRED — activities, WBS, predecessors, and float extracted automatically.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How accurate is deviation detection?</div>
+        <div class="faq-a">With good 360° coverage, IoU above 0.7 is typical for well-modeled elements. Every result includes a per-element confidence score.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Can stakeholders view without an account?</div>
+        <div class="faq-a">Read-only investor links are on the Pro roadmap. For now, share PDF reports or the executive summary. Shareable live links planned for Q3 2025.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What's the typical ROI?</div>
+        <div class="faq-a">One prevented critical-path delay typically covers months of cost. Case study projects report $200K–$500K in avoided recovery costs per catch.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Stop guessing.<br><em>Start knowing.</em></h2>
+  <p>The demo is live with a full seed project — 174 BIM elements, a real schedule, and a complete deviation analysis. No setup required.</p>
+  <div class="cta-btns">
+    <a href="https://miqyas-omega.vercel.app/" class="btn-cta-black" target="_blank">Request Demo →</a>
+    <a href="#pricing" class="btn-cta-outline">View Pricing</a>
+  </div>
+  <p class="cta-note">No credit card · No install · Works with your existing BIM workflow</p>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <a href="#" class="logo footer-logo" style="color:white">
+          <svg class="logo-mark" width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0"  y="0"  width="10" height="10" rx="2" fill="white"/>
+            <rect x="14" y="0"  width="10" height="10" rx="2" fill="white" opacity="0.2"/>
+            <rect x="0"  y="14" width="10" height="10" rx="2" fill="white" opacity="0.2"/>
+            <rect x="14" y="14" width="10" height="10" rx="2" fill="white" opacity="0.55"/>
+          </svg>
+          <span class="logo-word">MIQYAS</span>
+        </a>
+        <p class="footer-tagline">AI-powered construction progress tracking.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <div class="footer-col-title">Product</div>
+          <a href="#how">How it works</a>
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
+          <a href="https://miqyas-omega.vercel.app/" target="_blank">Live Demo</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Use Cases</div>
+          <a href="#">Site Supervisors</a>
+          <a href="#">Project Managers</a>
+          <a href="#">Investors</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Company</div>
+          <a href="mailto:hello@miqyas.io">Contact</a>
+          <a href="#faq">FAQ</a>
+          <a href="#">Privacy</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Miqyas. All rights reserved.</span>
+      <span>Built for the construction industry.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- THREE.JS -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+/* ── FLOOR DATA ── */
+const FLOORS = [
+  { level: 1, label: 'Level 1–2 · Structural Slab', status: 'on_track',    iou: 0.82, conf: 0.88, activity: 'A-1001', sched: 'Mar 10, 2025', critical: false, rec: 'Progressing normally. No action required.' },
+  { level: 2, label: 'Level 2–3 · MEP Rough-in',    status: 'on_track',    iou: 0.78, conf: 0.85, activity: 'A-1018', sched: 'Mar 28, 2025', critical: false, rec: 'MEP installation within expected bounds.' },
+  { level: 3, label: 'Level 3–4 · Steel Frame',      status: 'behind',      iou: 0.31, conf: 0.72, activity: 'A-1042', sched: 'Apr 14, 2025', critical: true,  rec: 'Raise RFI in Procore. 6-day delay impacts critical path — escalate immediately.' },
+  { level: 4, label: 'Level 4–5 · Concrete Pour',    status: 'ahead',       iou: 0.87, conf: 0.91, activity: 'A-1055', sched: 'May 02, 2025', critical: false, rec: 'Ahead of schedule. Monitor for resource rebalancing opportunity.' },
+  { level: 5, label: 'Level 5 · Roof Structure',     status: 'not_started', iou: null,  conf: null,  activity: 'A-1070', sched: 'Jun 09, 2025', critical: true,  rec: 'Not yet started. Critical path item — confirm materials lead time.' },
+];
+
+const STATUS = {
+  on_track:    { color: 0x888888, emissive: 0x000000, opacity: 0.85, label: 'On Track'        },
+  behind:      { color: 0xffffff, emissive: 0x777777, opacity: 1.00, label: 'Behind Schedule'  },
+  ahead:       { color: 0xbbbbbb, emissive: 0x111111, opacity: 0.90, label: 'Ahead'            },
+  not_started: { color: 0x1e1e1e, emissive: 0x000000, opacity: 0.70, label: 'Not Started'     },
+};
+
+/* ── SCENE SETUP ── */
+const wrap   = document.querySelector('.scene-wrap');
+const canvas = document.getElementById('bim-canvas');
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000000);
+scene.fog = new THREE.FogExp2(0x000000, 0.018);
+
+const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 300);
+camera.position.set(22, 18, 28);
+
+function resize() {
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+resize();
+window.addEventListener('resize', resize);
+
+/* ── CONTROLS ── */
+const controls = new OrbitControls(camera, canvas);
+controls.target.set(0, 8, 0);
+controls.minDistance = 10;
+controls.maxDistance = 70;
+controls.minPolarAngle = 0.2;
+controls.maxPolarAngle = Math.PI / 2.1;
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.6;
+
+let userTouched = false;
+controls.addEventListener('start', () => { userTouched = true; controls.autoRotate = false; });
+
+/* ── LIGHTS ── */
+scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
+dirLight.position.set(20, 30, 15);
+dirLight.castShadow = true;
+dirLight.shadow.mapSize.set(2048, 2048);
+dirLight.shadow.camera.near = 0.5;
+dirLight.shadow.camera.far = 100;
+dirLight.shadow.camera.left = -30;
+dirLight.shadow.camera.right = 30;
+dirLight.shadow.camera.top = 30;
+dirLight.shadow.camera.bottom = -30;
+scene.add(dirLight);
+
+const fillLight = new THREE.DirectionalLight(0xffffff, 0.2);
+fillLight.position.set(-15, 10, -10);
+scene.add(fillLight);
+
+/* ── GROUND ── */
+const groundGeo = new THREE.PlaneGeometry(120, 120);
+const groundMat = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 1 });
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+const grid = new THREE.GridHelper(80, 40, 0x1a1a1a, 0x111111);
+grid.position.y = 0.01;
+scene.add(grid);
+
+/* ── BUILDING GEOMETRY ── */
+const W = 12, D = 8, FH = 3.5;
+const colXs = [-W/2, -W/6, W/6, W/2];
+const colZs = [-D/2, 0, D/2];
+
+// Columns
+const colGeo = new THREE.BoxGeometry(0.28, FLOORS.length * FH + 0.5, 0.28);
+const colMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.7, metalness: 0.2 });
+colXs.forEach(x => colZs.forEach(z => {
+  const col = new THREE.Mesh(colGeo, colMat);
+  col.position.set(x, (FLOORS.length * FH + 0.5) / 2, z);
+  col.castShadow = true;
+  scene.add(col);
+}));
+
+// Foundation
+const foundGeo = new THREE.BoxGeometry(W + 1.5, 0.6, D + 1.5);
+const foundMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
+const found = new THREE.Mesh(foundGeo, foundMat);
+found.position.set(0, -0.3, 0);
+found.receiveShadow = true;
+scene.add(found);
+
+// Clickable floor slabs
+const slabs = [];
+
+FLOORS.forEach((data, i) => {
+  const y = (i + 1) * FH;
+  const cfg = STATUS[data.status];
+
+  // Slab
+  const geo = new THREE.BoxGeometry(W + 0.4, 0.22, D + 0.4);
+  const mat = new THREE.MeshStandardMaterial({
+    color: new THREE.Color(cfg.color),
+    emissive: new THREE.Color(cfg.emissive),
+    emissiveIntensity: data.status === 'behind' ? 0.3 : 0.05,
+    transparent: data.status === 'not_started',
+    opacity: cfg.opacity,
+    roughness: 0.45,
+    metalness: 0.15,
+  });
+
+  const slab = new THREE.Mesh(geo, mat);
+  slab.position.set(0, y, 0);
+  slab.castShadow = true;
+  slab.receiveShadow = true;
+  slab.userData = { ...data, cfg, originalColor: cfg.color, isSlab: true };
+  slabs.push(slab);
+  scene.add(slab);
+
+  // Perimeter beams
+  const beamMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.8 });
+  const bY = y - 0.36;
+
+  // Along X
+  [[-D/2, 0, W, 0.22, 0.18], [D/2, 0, W, 0.22, 0.18]].forEach(([z, , bW]) => {
+    const b = new THREE.Mesh(new THREE.BoxGeometry(bW, 0.42, 0.18), beamMat);
+    b.position.set(0, bY, z);
+    scene.add(b);
+  });
+  // Along Z
+  [[-W/2, D, 0.18, 0.42], [W/2, D, 0.18, 0.42]].forEach(([x, bD]) => {
+    const b = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.42, bD), beamMat);
+    b.position.set(x, bY, 0);
+    scene.add(b);
+  });
+
+  // Wireframe overlay for not_started
+  if (data.status === 'not_started') {
+    const wfGeo = new THREE.BoxGeometry(W + 0.45, 0.27, D + 0.45);
+    const wfMat = new THREE.MeshBasicMaterial({ color: 0x333333, wireframe: true });
+    const wf = new THREE.Mesh(wfGeo, wfMat);
+    wf.position.set(0, y, 0);
+    scene.add(wf);
+  }
+
+  // Highlight ring for "behind" floor
+  if (data.status === 'behind') {
+    const ringGeo = new THREE.BoxGeometry(W + 0.8, 0.04, D + 0.8);
+    const ringMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4 });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.position.set(0, y - 0.13, 0);
+    ring.userData.isRing = true;
+    scene.add(ring);
+    slabs.push(ring); // make ring clickable too
+  }
+});
+
+// Crane (off to the right)
+const craneMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.9 });
+const craneX = W / 2 + 4, craneZ = -D / 2 - 3;
+const craneH = FLOORS.length * FH * 1.35;
+// Mast
+const mast = new THREE.Mesh(new THREE.BoxGeometry(0.35, craneH, 0.35), craneMat);
+mast.position.set(craneX, craneH / 2, craneZ);
+scene.add(mast);
+// Jib
+const jib = new THREE.Mesh(new THREE.BoxGeometry(9, 0.2, 0.2), craneMat);
+jib.position.set(craneX - 2.5, craneH, craneZ);
+scene.add(jib);
+// Counter-jib
+const cjib = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.18, 0.18), craneMat);
+cjib.position.set(craneX + 3, craneH, craneZ);
+scene.add(cjib);
+// Tie cable (just a thin box)
+const cable = new THREE.Mesh(new THREE.BoxGeometry(0.04, craneH * 0.55, 0.04), craneMat);
+cable.position.set(craneX, craneH * 0.72, craneZ);
+scene.add(cable);
+// Hook cable
+const hkCable = new THREE.Mesh(new THREE.BoxGeometry(0.03, 4, 0.03), craneMat);
+hkCable.position.set(craneX - 5.5, craneH - 2, craneZ);
+scene.add(hkCable);
+
+// Some scaffolding on the "behind" floor (left side)
+const scaffMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, roughness: 0.9 });
+[0, 1.5, 3].forEach(dy => {
+  const bar = new THREE.Mesh(new THREE.BoxGeometry(0.08, 4, 0.08), scaffMat);
+  bar.position.set(-W / 2 - 0.8, 3 * FH + dy, -D / 2);
+  scene.add(bar);
+});
+[0, 2].forEach(dz => {
+  const bar = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, D + 1.5), scaffMat);
+  bar.position.set(-W / 2 - 0.8, 3 * FH + 1.5, -D / 2 + dz * (D / 2 + 0.75));
+  scene.add(bar);
+});
+
+/* ── INTERACTION ── */
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const tooltip = document.getElementById('tooltip');
+const panel   = document.getElementById('panel');
+let hoveredSlab = null;
+let selectedSlab = null;
+const hoverColor = new THREE.Color(0xffffff);
+
+function statusLabel(s) {
+  return { on_track: 'ON TRACK', behind: 'BEHIND SCHEDULE', ahead: 'AHEAD', not_started: 'NOT STARTED' }[s];
+}
+
+function showTooltip(e, data) {
+  tooltip.style.display = 'block';
+  document.getElementById('tt-name').textContent = data.label;
+  document.getElementById('tt-status').textContent = statusLabel(data.status);
+  moveTooltip(e);
+}
+function moveTooltip(e) {
+  const r = wrap.getBoundingClientRect();
+  let x = e.clientX - r.left + 14;
+  let y = e.clientY - r.top - 10;
+  if (x + 220 > r.width) x -= 240;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top  = y + 'px';
+}
+function hideTooltip() { tooltip.style.display = 'none'; }
+
+function openPanel(data) {
+  document.getElementById('p-title').textContent = data.label;
+
+  const chip = document.getElementById('p-status');
+  chip.innerHTML = `<span class="status-chip chip-${data.status}">${statusLabel(data.status)}</span>`;
+
+  if (data.iou !== null) {
+    document.getElementById('p-iou-wrap').style.display = '';
+    document.getElementById('p-iou').textContent = `${data.iou.toFixed(2)} — ${data.iou > 0.6 ? 'Good' : data.iou > 0.4 ? 'Fair' : 'Low'}`;
+    document.getElementById('p-iou-bar').style.width = (data.iou * 100) + '%';
+    document.getElementById('p-conf-wrap').style.display = '';
+    document.getElementById('p-conf').textContent = `${data.conf.toFixed(2)} — ${data.conf > 0.8 ? 'High' : 'Medium'}`;
+    document.getElementById('p-conf-bar').style.width = (data.conf * 100) + '%';
+  } else {
+    document.getElementById('p-iou-wrap').style.display = 'none';
+    document.getElementById('p-conf-wrap').style.display = 'none';
+  }
+
+  document.getElementById('p-activity').textContent = data.activity + (data.critical ? ' · Critical Path' : '');
+  document.getElementById('p-sched').textContent = data.sched;
+  document.getElementById('p-crit').textContent = data.critical ? '⚠ Yes — impacts completion date' : 'No — has float';
+  document.getElementById('p-rec').textContent = data.rec;
+
+  panel.style.display = 'block';
+  requestAnimationFrame(() => panel.classList.add('open'));
+}
+
+window.closePanel = function() {
+  panel.classList.remove('open');
+  if (selectedSlab) {
+    selectedSlab.material.color.setHex(selectedSlab.userData.originalColor);
+    selectedSlab.material.emissiveIntensity = selectedSlab.userData.status === 'behind' ? 0.3 : 0.05;
+    selectedSlab = null;
+  }
+  setTimeout(() => { panel.style.display = 'none'; }, 260);
+};
+
+canvas.addEventListener('mousemove', e => {
+  const r = wrap.getBoundingClientRect();
+  mouse.x =  ((e.clientX - r.left) / r.width)  * 2 - 1;
+  mouse.y = -((e.clientY - r.top)  / r.height) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(slabs);
+
+  if (hoveredSlab && hoveredSlab !== selectedSlab && !hoveredSlab.userData.isRing) {
+    hoveredSlab.material.color.setHex(hoveredSlab.userData.originalColor);
+    hoveredSlab.material.emissiveIntensity = hoveredSlab.userData.status === 'behind' ? 0.3 : 0.05;
+  }
+
+  if (hits.length > 0) {
+    const mesh = hits[0].object.userData.isRing
+      ? slabs.find(s => s.userData.label === hits[0].object.userData.label && !s.userData.isRing) || hits[0].object
+      : hits[0].object;
+
+    hoveredSlab = mesh;
+    if (mesh !== selectedSlab && !mesh.userData.isRing) {
+      mesh.material.color.copy(hoverColor);
+      mesh.material.emissiveIntensity = 0.5;
+    }
+    showTooltip(e, mesh.userData);
+    canvas.style.cursor = 'pointer';
+  } else {
+    hoveredSlab = null;
+    hideTooltip();
+    canvas.style.cursor = 'grab';
+  }
+
+  if (hits.length > 0) moveTooltip(e);
+});
+
+canvas.addEventListener('click', () => {
+  if (hoveredSlab && !hoveredSlab.userData.isRing) {
+    if (selectedSlab && selectedSlab !== hoveredSlab) {
+      selectedSlab.material.color.setHex(selectedSlab.userData.originalColor);
+      selectedSlab.material.emissiveIntensity = selectedSlab.userData.status === 'behind' ? 0.3 : 0.05;
+    }
+    selectedSlab = hoveredSlab;
+    openPanel(selectedSlab.userData);
+    userTouched = true; controls.autoRotate = false;
+  } else if (!hoveredSlab) {
+    closePanel();
+  }
+});
+
+canvas.addEventListener('mouseleave', hideTooltip);
+
+/* ── ANIMATE ── */
+const clock = new THREE.Clock();
+
+(function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+
+  // Auto-rotate for first 4 seconds
+  if (!userTouched && t < 4) controls.autoRotate = true;
+  else if (!userTouched && t >= 4) { controls.autoRotate = false; userTouched = true; }
+
+  // Pulse "behind" slabs
+  slabs.forEach(mesh => {
+    if (mesh.userData.status === 'behind' && mesh !== selectedSlab && mesh !== hoveredSlab) {
+      mesh.material.emissiveIntensity = 0.18 + 0.18 * Math.sin(t * 3.5);
+    }
+  });
+
+  controls.update();
+  renderer.render(scene, camera);
+})();
+</script>
+</body>
+</html>
