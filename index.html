@@ -43,23 +43,14 @@ nav {
   padding: 0 40px; height: 56px;
 }
 /* ── LOGO ── */
-.logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  color: inherit;
-  flex-shrink: 0;
-}
-.logo-mark { display: block; flex-shrink: 0; }
+.logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+.logo-img { height: 32px; width: 32px; border-radius: 7px; display: block; }
 .logo-word {
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: inherit;
-  line-height: 1;
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 0.12em; color: #fff; line-height: 1;
 }
+.footer-logo .logo-word { color: #fff; }
 .nav-links { display: flex; gap: 32px; list-style: none; }
 .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; transition: color 0.15s; }
 .nav-links a:hover { color: var(--text); }
@@ -398,12 +389,7 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
 <!-- NAV -->
 <nav>
   <a href="#" class="logo">
-    <svg class="logo-mark" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="0"  y="0"  width="10" height="10" rx="2" fill="white"/>
-      <rect x="14" y="0"  width="10" height="10" rx="2" fill="white" opacity="0.2"/>
-      <rect x="0"  y="14" width="10" height="10" rx="2" fill="white" opacity="0.2"/>
-      <rect x="14" y="14" width="10" height="10" rx="2" fill="white" opacity="0.55"/>
-    </svg>
+    <img src="assets/logo.jpeg" alt="Miqyas" class="logo-img" />
     <span class="logo-word">MIQYAS</span>
   </a>
   <ul class="nav-links">
@@ -753,13 +739,8 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
   <div class="footer-inner">
     <div class="footer-top">
       <div>
-        <a href="#" class="logo footer-logo" style="color:white">
-          <svg class="logo-mark" width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0"  y="0"  width="10" height="10" rx="2" fill="white"/>
-            <rect x="14" y="0"  width="10" height="10" rx="2" fill="white" opacity="0.2"/>
-            <rect x="0"  y="14" width="10" height="10" rx="2" fill="white" opacity="0.2"/>
-            <rect x="14" y="14" width="10" height="10" rx="2" fill="white" opacity="0.55"/>
-          </svg>
+        <a href="#" class="logo footer-logo">
+          <img src="assets/logo.jpeg" alt="Miqyas" class="logo-img" />
           <span class="logo-word">MIQYAS</span>
         </a>
         <p class="footer-tagline">AI-powered construction progress tracking.</p>
