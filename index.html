@@ -103,13 +103,36 @@ nav {
 .hero-note { font-size: 12px; color: var(--muted); }
 
 /* ── 3D SCENE ── */
+/* ── SCENE SECTION CONTAINER ── */
+.scene-section {
+  padding: 56px 24px 64px;
+}
+.scene-section-label {
+  text-align: center;
+  font-size: 11px; font-weight: 500; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px;
+}
+.scene-section-title {
+  text-align: center;
+  font-family: 'Newsreader', serif;
+  font-size: clamp(24px, 3.5vw, 38px);
+  font-weight: 600; color: #fff; letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+.scene-section-sub {
+  text-align: center;
+  font-size: 15px; color: var(--muted); margin-bottom: 32px;
+}
 .scene-wrap {
   position: relative;
-  width: 100%; height: 600px;
+  max-width: 960px;
+  margin: 0 auto;
+  height: 560px;
+  border-radius: 18px;
+  border: 1px solid var(--border2);
   overflow: hidden;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
   background: #000;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 24px 64px rgba(0,0,0,0.6);
 }
 #bim-canvas { display: block; width: 100%; height: 100%; }
 
@@ -417,6 +440,10 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
 </div>
 
 <!-- 3D BIM SCENE -->
+<div class="scene-section">
+<div class="scene-section-label">Live Demo</div>
+<div class="scene-section-title">See deviations at a glance</div>
+<div class="scene-section-sub">Interact with the model — click any floor to inspect its status</div>
 <div class="scene-wrap">
   <canvas id="bim-canvas"></canvas>
 
@@ -468,7 +495,8 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
     <div class="legend-row"><div class="legend-sq" style="background:#222;border:1px dashed #444"></div>Not started</div>
   </div>
   <div class="scene-hint">Drag to orbit · Scroll to zoom · Click a floor to inspect</div>
-</div>
+</div><!-- /scene-wrap -->
+</div><!-- /scene-section -->
 
 <!-- PROBLEM -->
 <hr />
@@ -797,11 +825,14 @@ const FLOORS = [
 ];
 
 const STATUS = {
-  on_track:    { color: 0x888888, emissive: 0x000000, opacity: 0.85, label: 'On Track'        },
-  behind:      { color: 0xffffff, emissive: 0x777777, opacity: 1.00, label: 'Behind Schedule'  },
-  ahead:       { color: 0xbbbbbb, emissive: 0x111111, opacity: 0.90, label: 'Ahead'            },
-  not_started: { color: 0x1e1e1e, emissive: 0x000000, opacity: 0.70, label: 'Not Started'     },
+  on_track:    { color: 0x707070, emissive: 0x000000, opacity: 0.88, label: 'On Track'        },
+  behind:      { color: 0xffffff, emissive: 0xbbbbbb, opacity: 1.00, label: 'Behind Schedule'  },
+  ahead:       { color: 0xd0d0d0, emissive: 0x303030, opacity: 0.95, label: 'Ahead'            },
+  not_started: { color: 0x181818, emissive: 0x000000, opacity: 0.65, label: 'Not Started'     },
 };
+
+// Per-floor accent tones (within status palette, for visual variety)
+const FLOOR_TONES = [0x6a6a6a, 0x808080, 0xffffff, 0xd8d8d8, 0x141414];
 
 /* ── SCENE SETUP ── */
 const wrap   = document.querySelector('.scene-wrap');
@@ -903,102 +934,224 @@ const slabs = [];
 FLOORS.forEach((data, i) => {
   const y = (i + 1) * FH;
   const cfg = STATUS[data.status];
+  const floorColor = FLOOR_TONES[i];
 
-  // Slab
-  const geo = new THREE.BoxGeometry(W + 0.4, 0.22, D + 0.4);
+  // Slab — each floor gets a distinct grayscale tone
+  const geo = new THREE.BoxGeometry(W + 0.4, 0.24, D + 0.4);
   const mat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(cfg.color),
+    color: new THREE.Color(floorColor),
     emissive: new THREE.Color(cfg.emissive),
-    emissiveIntensity: data.status === 'behind' ? 0.3 : 0.05,
+    emissiveIntensity: data.status === 'behind' ? 0.45 : data.status === 'ahead' ? 0.08 : 0.02,
     transparent: data.status === 'not_started',
     opacity: cfg.opacity,
-    roughness: 0.45,
-    metalness: 0.15,
+    roughness: data.status === 'behind' ? 0.2 : 0.5,
+    metalness: data.status === 'behind' ? 0.4 : 0.1,
   });
 
   const slab = new THREE.Mesh(geo, mat);
   slab.position.set(0, y, 0);
   slab.castShadow = true;
   slab.receiveShadow = true;
-  slab.userData = { ...data, cfg, originalColor: cfg.color, isSlab: true };
+  slab.userData = { ...data, cfg, originalColor: floorColor, isSlab: true };
   slabs.push(slab);
   scene.add(slab);
 
-  // Perimeter beams
-  const beamMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.8 });
-  const bY = y - 0.36;
+  // Edge trim line at top of each slab (bright horizontal line for visual separation)
+  const trimBrightness = data.status === 'behind' ? 0xffffff
+                       : data.status === 'ahead'   ? 0xdddddd
+                       : data.status === 'on_track' ? 0x888888
+                       :                              0x2a2a2a;
+  const trimGeo = new THREE.BoxGeometry(W + 0.5, 0.04, D + 0.5);
+  const trimMat = new THREE.MeshBasicMaterial({ color: trimBrightness, transparent: true, opacity: data.status === 'not_started' ? 0.2 : 0.7 });
+  const trim = new THREE.Mesh(trimGeo, trimMat);
+  trim.position.set(0, y + 0.14, 0);
+  scene.add(trim);
+
+  // Perimeter beams — darker for lower floors, slightly lighter higher up
+  const beamTone = 0x111111 + i * 0x040404;
+  const beamMat = new THREE.MeshStandardMaterial({ color: beamTone, roughness: 0.85 });
+  const bY = y - 0.38;
 
   // Along X
-  [[-D/2, 0, W, 0.22, 0.18], [D/2, 0, W, 0.22, 0.18]].forEach(([z, , bW]) => {
-    const b = new THREE.Mesh(new THREE.BoxGeometry(bW, 0.42, 0.18), beamMat);
+  [[-D/2], [D/2]].forEach(([z]) => {
+    const b = new THREE.Mesh(new THREE.BoxGeometry(W, 0.44, 0.2), beamMat);
     b.position.set(0, bY, z);
     scene.add(b);
   });
   // Along Z
-  [[-W/2, D, 0.18, 0.42], [W/2, D, 0.18, 0.42]].forEach(([x, bD]) => {
-    const b = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.42, bD), beamMat);
+  [[-W/2], [W/2]].forEach(([x]) => {
+    const b = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.44, D), beamMat);
     b.position.set(x, bY, 0);
     scene.add(b);
   });
 
+  // Window panels on front facade (Z = D/2 face), only for floors with some progress
+  if (data.status !== 'not_started') {
+    const winBrightness = data.status === 'behind' ? 0x444444
+                        : data.status === 'ahead'   ? 0x383838
+                        :                              0x252525;
+    const winMat = new THREE.MeshStandardMaterial({
+      color: winBrightness,
+      roughness: 0.3, metalness: 0.5,
+      transparent: true, opacity: 0.85,
+    });
+    // 3 windows per floor on front face
+    [-3.5, 0, 3.5].forEach(wx => {
+      const win = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.4, 0.08), winMat);
+      win.position.set(wx, y - FH * 0.35, D / 2 + 0.22);
+      scene.add(win);
+      // Window frame
+      const frameMat = new THREE.MeshBasicMaterial({ color: 0x1a1a1a, wireframe: true });
+      const frame = new THREE.Mesh(new THREE.BoxGeometry(2.05, 1.45, 0.09), frameMat);
+      frame.position.copy(win.position);
+      scene.add(frame);
+    });
+    // 2 windows on side face (Z = -D/2)
+    [-2.5, 2.5].forEach(wx => {
+      const win = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.4, 0.08), winMat);
+      win.position.set(wx, y - FH * 0.35, -D / 2 - 0.22);
+      win.rotation.y = Math.PI;
+      scene.add(win);
+    });
+  }
+
   // Wireframe overlay for not_started
   if (data.status === 'not_started') {
-    const wfGeo = new THREE.BoxGeometry(W + 0.45, 0.27, D + 0.45);
-    const wfMat = new THREE.MeshBasicMaterial({ color: 0x333333, wireframe: true });
+    const wfGeo = new THREE.BoxGeometry(W + 0.5, 0.3, D + 0.5);
+    const wfMat = new THREE.MeshBasicMaterial({ color: 0x2a2a2a, wireframe: true });
     const wf = new THREE.Mesh(wfGeo, wfMat);
     wf.position.set(0, y, 0);
     scene.add(wf);
+    // Ghost outline of where windows will be
+    [-3.5, 0, 3.5].forEach(wx => {
+      const ghostMat = new THREE.MeshBasicMaterial({ color: 0x1e1e1e, wireframe: true });
+      const ghost = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.4, 0.06), ghostMat);
+      ghost.position.set(wx, y - FH * 0.35, D / 2 + 0.2);
+      scene.add(ghost);
+    });
   }
 
-  // Highlight ring for "behind" floor
+  // Bright alert halo for "behind" floor
   if (data.status === 'behind') {
-    const ringGeo = new THREE.BoxGeometry(W + 0.8, 0.04, D + 0.8);
-    const ringMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4 });
+    const ringGeo = new THREE.BoxGeometry(W + 1.0, 0.05, D + 1.0);
+    const ringMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
     const ring = new THREE.Mesh(ringGeo, ringMat);
-    ring.position.set(0, y - 0.13, 0);
+    ring.position.set(0, y - 0.12, 0);
     ring.userData.isRing = true;
     scene.add(ring);
     slabs.push(ring); // make ring clickable too
+
+    // Second outer ring for extra drama
+    const ring2 = new THREE.Mesh(
+      new THREE.BoxGeometry(W + 1.6, 0.03, D + 1.6),
+      new THREE.MeshBasicMaterial({ color: 0xdddddd, transparent: true, opacity: 0.2 })
+    );
+    ring2.position.set(0, y - 0.12, 0);
+    scene.add(ring2);
+  }
+
+  // Subtle highlight for "ahead" floor
+  if (data.status === 'ahead') {
+    const aheadRing = new THREE.Mesh(
+      new THREE.BoxGeometry(W + 0.6, 0.03, D + 0.6),
+      new THREE.MeshBasicMaterial({ color: 0xcccccc, transparent: true, opacity: 0.25 })
+    );
+    aheadRing.position.set(0, y + 0.14, 0);
+    scene.add(aheadRing);
   }
 });
 
-// Crane (off to the right)
-const craneMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.9 });
-const craneX = W / 2 + 4, craneZ = -D / 2 - 3;
-const craneH = FLOORS.length * FH * 1.35;
+// Crane (off to the right) — slightly brighter to read against dark bg
+const craneMat = new THREE.MeshStandardMaterial({ color: 0x2e2e2e, roughness: 0.8, metalness: 0.3 });
+const craneX = W / 2 + 4.5, craneZ = -D / 2 - 3;
+const craneH = FLOORS.length * FH * 1.4;
 // Mast
-const mast = new THREE.Mesh(new THREE.BoxGeometry(0.35, craneH, 0.35), craneMat);
+const mast = new THREE.Mesh(new THREE.BoxGeometry(0.38, craneH, 0.38), craneMat);
 mast.position.set(craneX, craneH / 2, craneZ);
+mast.castShadow = true;
 scene.add(mast);
 // Jib
-const jib = new THREE.Mesh(new THREE.BoxGeometry(9, 0.2, 0.2), craneMat);
+const jib = new THREE.Mesh(new THREE.BoxGeometry(10, 0.22, 0.22), craneMat);
 jib.position.set(craneX - 2.5, craneH, craneZ);
 scene.add(jib);
 // Counter-jib
-const cjib = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.18, 0.18), craneMat);
-cjib.position.set(craneX + 3, craneH, craneZ);
+const cjib = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.2, 0.2), craneMat);
+cjib.position.set(craneX + 3.2, craneH, craneZ);
 scene.add(cjib);
-// Tie cable (just a thin box)
-const cable = new THREE.Mesh(new THREE.BoxGeometry(0.04, craneH * 0.55, 0.04), craneMat);
-cable.position.set(craneX, craneH * 0.72, craneZ);
+// Counterweight block
+const cw = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.5, 0.5),
+  new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.7 }));
+cw.position.set(craneX + 4.5, craneH - 0.15, craneZ);
+scene.add(cw);
+// Tie cable
+const cable = new THREE.Mesh(new THREE.BoxGeometry(0.05, craneH * 0.5, 0.05), craneMat);
+cable.position.set(craneX, craneH * 0.75, craneZ);
 scene.add(cable);
-// Hook cable
-const hkCable = new THREE.Mesh(new THREE.BoxGeometry(0.03, 4, 0.03), craneMat);
-hkCable.position.set(craneX - 5.5, craneH - 2, craneZ);
+// Hook cable — hangs down to "behind" floor level
+const hkCable = new THREE.Mesh(new THREE.BoxGeometry(0.04, 5.5, 0.04), craneMat);
+hkCable.position.set(craneX - 5.5, craneH - 2.75, craneZ);
 scene.add(hkCable);
+// Hook block
+const hook = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.4),
+  new THREE.MeshStandardMaterial({ color: 0x555555, roughness: 0.5, metalness: 0.6 }));
+hook.position.set(craneX - 5.5, craneH - 5.5, craneZ);
+scene.add(hook);
 
-// Some scaffolding on the "behind" floor (left side)
-const scaffMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, roughness: 0.9 });
-[0, 1.5, 3].forEach(dy => {
-  const bar = new THREE.Mesh(new THREE.BoxGeometry(0.08, 4, 0.08), scaffMat);
-  bar.position.set(-W / 2 - 0.8, 3 * FH + dy, -D / 2);
-  scene.add(bar);
+// Scaffolding on the "behind" floor (level 3) — left side, more structured
+const scaffMat = new THREE.MeshStandardMaterial({ color: 0x282828, roughness: 0.9, metalness: 0.2 });
+const scaffY0 = 2 * FH; // base of floor 3
+// Vertical poles
+[[-W/2 - 0.7, -D/2 - 0.1], [-W/2 - 0.7, D/2 + 0.1]].forEach(([sx, sz]) => {
+  [0, 1, 2, 3].forEach(row => {
+    const pole = new THREE.Mesh(new THREE.BoxGeometry(0.09, FH + 0.5, 0.09), scaffMat);
+    pole.position.set(sx, scaffY0 + (FH + 0.5) / 2, sz);
+    scene.add(pole);
+  });
 });
-[0, 2].forEach(dz => {
-  const bar = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, D + 1.5), scaffMat);
-  bar.position.set(-W / 2 - 0.8, 3 * FH + 1.5, -D / 2 + dz * (D / 2 + 0.75));
-  scene.add(bar);
+// Horizontal ledgers at each scaffold level
+[0, FH * 0.33, FH * 0.66, FH].forEach(dy => {
+  const ledger = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.09, D + 0.3), scaffMat);
+  ledger.position.set(-W / 2 - 0.7, scaffY0 + dy, 0);
+  scene.add(ledger);
 });
+// Cross braces
+const brace1 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, D * 1.1), scaffMat);
+brace1.position.set(-W / 2 - 0.7, scaffY0 + FH * 0.5, 0);
+brace1.rotation.x = Math.PI / 7;
+scene.add(brace1);
+// Scaffold platform decking
+const deck = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.05, D + 0.2),
+  new THREE.MeshStandardMaterial({ color: 0x1e1e1e, roughness: 1 }));
+deck.position.set(-W / 2 - 0.7, scaffY0 + FH * 0.5, 0);
+scene.add(deck);
+
+// Stacked material pallets near building base
+const palletMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 1 });
+const stackMat  = new THREE.MeshStandardMaterial({ color: 0x303030, roughness: 0.9 });
+[[-W/2 - 2.5, D/2 + 1.5], [W/2 + 2, D/2 + 2]].forEach(([px, pz]) => {
+  const pallet = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.15, 1.2), palletMat);
+  pallet.position.set(px, 0.075, pz);
+  scene.add(pallet);
+  const stack = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.6, 1.0), stackMat);
+  stack.position.set(px, 0.45, pz);
+  scene.add(stack);
+});
+
+// Concrete barriers / perimeter fence posts
+for (let fx = -W / 2 - 2; fx <= W / 2 + 2; fx += 2.5) {
+  const post = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.9, 0.15),
+    new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.9 }));
+  post.position.set(fx, 0.45, D / 2 + 2.5);
+  scene.add(post);
+}
+// Fence rails
+const rail1 = new THREE.Mesh(new THREE.BoxGeometry(W + 4, 0.06, 0.06),
+  new THREE.MeshStandardMaterial({ color: 0x1a1a1a }));
+rail1.position.set(0, 0.7, D / 2 + 2.5);
+scene.add(rail1);
+const rail2 = rail1.clone();
+rail2.position.set(0, 0.35, D / 2 + 2.5);
+scene.add(rail2);
 
 /* ── INTERACTION ── */
 const raycaster = new THREE.Raycaster();
