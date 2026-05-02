@@ -1352,10 +1352,12 @@ FLOORS.forEach((data, i) => {
   const beamMat = new THREE.MeshStandardMaterial({ color: beamTone, roughness: 0.8, metalness: 0.15 });
   const bY = y - 0.52;
   [[-D/2], [D/2]].forEach(([z]) => {
-    scene.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(W, 0.55, 0.24), beamMat), { position: new THREE.Vector3(0, bY, z) }));
+    const b = new THREE.Mesh(new THREE.BoxGeometry(W, 0.55, 0.24), beamMat);
+    b.position.set(0, bY, z); scene.add(b);
   });
   [[-W/2], [W/2]].forEach(([x]) => {
-    scene.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.55, D), beamMat), { position: new THREE.Vector3(x, bY, 0) }));
+    const b = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.55, D), beamMat);
+    b.position.set(x, bY, 0); scene.add(b);
   });
   // Interior secondary beams (cross the slab for realism)
   [-W/4, 0, W/4].forEach(bx => {
@@ -1385,20 +1387,22 @@ FLOORS.forEach((data, i) => {
   }
   // Highlight — "ahead"
   if (data.status === 'ahead') {
-    scene.add(Object.assign(
-      new THREE.Mesh(new THREE.BoxGeometry(W + 0.8, 0.03, D + 0.8),
-        new THREE.MeshBasicMaterial({ color: 0xcccccc, transparent: true, opacity: 0.3 })),
-      { position: new THREE.Vector3(0, y + 0.17, 0) }
-    ));
+    const aRing = new THREE.Mesh(
+      new THREE.BoxGeometry(W + 0.8, 0.03, D + 0.8),
+      new THREE.MeshBasicMaterial({ color: 0xcccccc, transparent: true, opacity: 0.3 })
+    );
+    aRing.position.set(0, y + 0.17, 0);
+    scene.add(aRing);
   }
 
   // Wireframe + rebar — "not_started"
   if (data.status === 'not_started') {
-    scene.add(Object.assign(
-      new THREE.Mesh(new THREE.BoxGeometry(W + 0.5, 0.32, D + 0.5),
-        new THREE.MeshBasicMaterial({ color: 0x252525, wireframe: true })),
-      { position: new THREE.Vector3(0, y, 0) }
-    ));
+    const wf = new THREE.Mesh(
+      new THREE.BoxGeometry(W + 0.5, 0.32, D + 0.5),
+      new THREE.MeshBasicMaterial({ color: 0x252525, wireframe: true })
+    );
+    wf.position.set(0, y, 0);
+    scene.add(wf);
     // Exposed rebar grid sticking up
     const rebarMat = new THREE.MeshStandardMaterial({ color: 0x1e1e1e, roughness: 0.85, metalness: 0.6 });
     for (let rx = -W/2 + 1; rx < W/2; rx += 1.8) {
