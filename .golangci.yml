@@ -1,0 +1,43 @@
+# golangci-lint конфиг. Намеренно консервативный — на старте проекта
+# хочется чтобы линтер ловил реальные ошибки, а не стилистические шумы.
+
+run:
+  timeout: 5m
+  go: "1.23"
+  tests: true
+
+linters:
+  disable-all: true
+  enable:
+    - errcheck       # необработанные ошибки
+    - gosimple       # упрощения
+    - govet          # стандартный vet
+    - ineffassign    # неиспользуемые присвоения
+    - staticcheck    # большой набор статанализа
+    - typecheck      # компиляция
+    - unused         # неиспользуемый код
+    - gofmt
+    - goimports
+    - misspell
+    - bodyclose      # незакрытые resp.Body
+    - errorlint      # corrupt error wrapping (errors.Is/As)
+    - revive         # стилистика без слишком жёстких правил
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+  revive:
+    rules:
+      - name: var-naming
+      - name: package-comments
+        disabled: true
+      - name: exported
+        disabled: true
+
+issues:
+  exclude-rules:
+    # Тесты часто намеренно игнорируют ошибки.
+    - path: _test\.go
+      linters: [errcheck, bodyclose]
+  max-issues-per-linter: 0
+  max-same-issues: 0
