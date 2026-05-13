@@ -1,0 +1,27 @@
+# VCS / IDE
+.git
+.github
+.idea
+.vscode
+
+# Build outputs
+bin/
+tmp/
+*.log
+
+# Frontend (отдельный build pipeline)
+web/console/node_modules
+web/console/.next
+web/console/out
+
+# Local data
+var/
+deploy/*/data
+
+# Тестовые артефакты
+coverage.out
+*.test
+
+# Локальные секреты
+.env
+.env.local

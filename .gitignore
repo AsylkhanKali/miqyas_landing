@@ -1,0 +1,14 @@
+/bin/
+/tmp/
+.env
+.env.local
+*.log
+.DS_Store
+coverage.out
+.idea/
+.vscode/
+
+# Local dev secrets & binaries
+.env
+var/
+bin/
