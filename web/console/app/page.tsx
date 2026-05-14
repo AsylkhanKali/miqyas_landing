@@ -18,7 +18,7 @@ export default function Home() {
   return (
     <>
       <h1>Operator Console</h1>
-      <p className="muted">
+      <p className="muted" style={{ maxWidth: 680, fontSize: 14, lineHeight: 1.6 }}>
         Внутренний инструмент для подготовки и подачи заявок. Подача не выполняется
         автоматически в окне 30&nbsp;минут до дедлайна — требуется явное подтверждение оператора.
       </p>
