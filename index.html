@@ -587,9 +587,12 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
   background: rgba(3,6,15,0.35);
   backdrop-filter: blur(8px);
   border-radius: 12px;
-  padding: 28px 32px;
-  max-width: 700px; width: 100%;
+  padding: 24px 28px;
+  max-width: 860px; width: 100%;
+  flex-wrap: nowrap;
 }
+.hero-wrap .hstat { padding: 0 22px; }
+.hero-wrap .hstat-l { max-width: 180px; font-size: 11.5px; line-height: 1.45; }
 .hero-wrap .btn-sec { border-color: rgba(255,255,255,0.25); }
 .hero-wrap .btn-sec:hover { border-color: rgba(255,255,255,0.55); }
 .hero h1 em { color: rgba(255,255,255,0.48); }
@@ -1568,15 +1571,14 @@ scene.add(rimLight);
 
 /* ── GROUND ── */
 const groundGeo = new THREE.PlaneGeometry(120, 120);
-const groundMat = new THREE.MeshStandardMaterial({ color: 0xf0f4ff, roughness: 1 });
+const groundMat = new THREE.MeshStandardMaterial({ color: 0xeef1f8, roughness: 0.95 });
 const ground = new THREE.Mesh(groundGeo, groundMat);
 ground.rotation.x = -Math.PI / 2;
+ground.position.y = -0.02; /* sink slightly to eliminate z-fighting */
 ground.receiveShadow = true;
 scene.add(ground);
 
-const grid = new THREE.GridHelper(80, 40, 0xd0d8ee, 0xe4e9f5);
-grid.position.y = 0.01;
-scene.add(grid);
+/* Grid removed — z-fights with ground on white bg; shadows provide depth instead */
 
 /* ── BUILDING GEOMETRY ── */
 const W = 15, D = 10, FH = 4.0;
@@ -1945,20 +1947,24 @@ const cw = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.7, 0.7),
 cw.position.set(6.5, -0.2, 0);
 craneHead.add(cw);
 
-// Pendant cable from mast to jib tip
-const pendMat = new THREE.MeshBasicMaterial({ color: 0x1e1e1e });
-const pend = new THREE.Mesh(new THREE.BoxGeometry(0.04, 8, 0.04), pendMat);
-pend.position.set(-7.5, -4, 0);
-pend.rotation.z = -0.28;
+// Pendant (stay) cable: diagonal from mast cap (0, 1.2, 0) to jib tip (-11, 0, 0)
+const pendMat = new THREE.MeshBasicMaterial({ color: 0x2a2a2a });
+const pendDx = -11, pendDy = -1.2;
+const pendLen = Math.sqrt(pendDx * pendDx + pendDy * pendDy); // ~11.07
+const pendAngle = Math.atan2(pendDy, pendDx); // angle from horizontal
+const pend = new THREE.Mesh(new THREE.BoxGeometry(pendLen, 0.04, 0.04), pendMat);
+pend.position.set(pendDx / 2, 1.2 + pendDy / 2, 0); // midpoint
+pend.rotation.z = pendAngle; // align along diagonal
 craneHead.add(pend);
 
-// Hook cable + block
-const hkCable = new THREE.Mesh(new THREE.BoxGeometry(0.045, 8.5, 0.045), pendMat);
-hkCable.position.set(-9, -4.25, 0);
+// Hook cable: starts at bottom of jib (y=0), hangs down 9 units
+const hkCableLen = 9.0;
+const hkCable = new THREE.Mesh(new THREE.BoxGeometry(0.05, hkCableLen, 0.05), pendMat);
+hkCable.position.set(-9, -hkCableLen / 2, 0); // top flush with jib (y=0), bottom at y=-9
 craneHead.add(hkCable);
 const hookBlock = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.55, 0.55),
   new THREE.MeshStandardMaterial({ color: 0x505050, roughness: 0.35, metalness: 0.8 }));
-hookBlock.position.set(-9, -8.6, 0);
+hookBlock.position.set(-9, -hkCableLen - 0.275, 0); // top at y=-9, exactly flush with cable bottom
 craneHead.add(hookBlock);
 
 scene.add(craneHead);
