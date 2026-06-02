@@ -12,21 +12,26 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:      #000000;
-  --bg2:     #070708;
+  --bg:      #03060f;
+  --bg2:     #060a14;
   --border:  rgba(255,255,255,0.08);
-  --border2: rgba(255,255,255,0.16);
-  --text:    #ffffff;
-  --muted:   #6a6a72;
-  --mid:     #9a9aa4;
-  --card:    #0c0c0e;
-  --card2:   #131316;
-  --card3:   #18181c;
+  --border2: rgba(255,255,255,0.14);
+  --text:    #f0f4ff;
+  --muted:   #6a7080;
+  --mid:     #9aa0b0;
+  --card:    #0b0f1c;
+  --card2:   #101524;
+  --card3:   #151c2a;
 
-  /* one restrained signal accent (cool blue) — data, focus, alerts only */
+  /* cool blue accent */
   --accent:      #5b8cff;
   --accent-soft: rgba(91,140,255,0.14);
   --accent-line: rgba(91,140,255,0.32);
+
+  /* amber/gold — third color: alerts, step numbers, highlight accents */
+  --gold:      #e8a94a;
+  --gold-soft: rgba(232,169,74,0.14);
+  --gold-line: rgba(232,169,74,0.35);
 
   /* status (mirrors the 3D scene language) */
   --st-behind: #ff6b5e;
@@ -208,10 +213,10 @@ nav {
   display: inline-block; font-size: 10px; padding: 2px 8px;
   border-radius: 4px; border: 1px solid; font-weight: 500; letter-spacing: 0.04em;
 }
-.chip-behind { color: #fff; border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.1); }
-.chip-on_track { color: #888; border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); }
-.chip-ahead { color: #aaa; border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
-.chip-not_started { color: #444; border-color: rgba(255,255,255,0.08); background: transparent; }
+.chip-behind    { color: #e8a94a; border-color: rgba(232,169,74,0.4);  background: rgba(232,169,74,0.08); }
+.chip-on_track  { color: #22c55e; border-color: rgba(34,197,94,0.35);   background: rgba(34,197,94,0.07);  }
+.chip-ahead     { color: #60a5fa; border-color: rgba(96,165,250,0.35);  background: rgba(96,165,250,0.07); }
+.chip-not_started { color: #64748b; border-color: rgba(100,116,139,0.25); background: transparent; }
 .panel-rfi-btn {
   display: block; margin-top: 16px; padding: 9px;
   border: 1px solid var(--border2); border-radius: 6px;
@@ -657,11 +662,166 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
 .json-body .b { color: var(--st-behind); }
 .json-body .p { color: var(--muted); }
 
+/* ── HERO GRID BACKDROP ── */
+.hero::after {
+  content: "";
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(91,140,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91,140,255,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 90% at 50% 50%, black 20%, transparent 100%);
+  animation: gridSlide 30s linear infinite;
+}
+@keyframes gridSlide { to { background-position: 48px 48px, 48px 48px; } }
+
+/* ── SECTION SEPARATOR ── */
+.div-grad {
+  border: none; height: 1px; position: relative;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+}
+.div-grad::after {
+  content: "◆"; position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 7px; color: rgba(255,255,255,0.14);
+  background: var(--bg); padding: 0 10px; letter-spacing: 6px;
+}
+
+/* ── FEATURE ICON — SVG ── */
+.feature-icon { width: 42px; height: 42px; margin-bottom: 18px; }
+.feature-icon svg { width: 100%; height: 100%; }
+
+/* ── WHY CARD kicker colors ── */
+.why-card:nth-child(1) .why-kicker { color: var(--gold); }
+.why-card:nth-child(1) .det-chip   { color: var(--gold); border-color: var(--gold-line); background: var(--gold-soft); }
+.why-card:nth-child(1) .det-dot    { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+.why-card:nth-child(2) .why-kicker { color: var(--accent); }
+.why-card:nth-child(3) .why-kicker { color: #22c55e; }
+
+/* make first why-card top accent line always visible */
+.why-card:nth-child(1)::before {
+  content: ""; position: absolute; top: 0; left: 22px; right: 22px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-line), transparent);
+  opacity: 1;
+}
+
+/* ── PIPELINE (How It Works) ── */
+.pipeline { margin-top: 64px; display: flex; flex-direction: column; gap: 0; }
+
+.pipe-step {
+  display: grid; grid-template-columns: 1fr 1.1fr; gap: 64px; align-items: center;
+  padding: 64px 0; border-top: 1px solid var(--border);
+}
+.pipe-step:first-child { border-top: none; }
+
+.pipe-step-num {
+  font-family: 'Fraunces', serif; font-size: 80px; font-weight: 600; line-height: 1;
+  color: var(--gold); opacity: 0.25; letter-spacing: -0.04em;
+  margin-bottom: 10px; display: block;
+}
+.pipe-step-label {
+  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px;
+}
+.pipe-step-title { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 600; color: #fff; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 12px; }
+.pipe-step-body  { font-size: 14.5px; color: var(--muted); line-height: 1.7; }
+
+/* File stack (step 1) */
+.pipe-file-stack { display: flex; flex-direction: column; gap: 8px; }
+.pipe-file-card {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--card2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 16px; transition: border-color 0.2s var(--ease);
+}
+.pipe-file-card:hover { border-color: var(--border2); }
+.pfc-icon { width: 36px; height: 36px; flex-shrink: 0; border-radius: 8px; background: var(--card3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+.pfc-icon svg { width: 18px; height: 18px; }
+.pfc-info { flex: 1; min-width: 0; }
+.pfc-name { font-family: ui-monospace, monospace; font-size: 12.5px; color: #fff; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pfc-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.pfc-badge { font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; flex-shrink: 0; }
+.pfc-badge.in { color: var(--accent); border-color: var(--accent-line); }
+
+/* Flow nodes (step 2) */
+.pipe-flow-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px 20px; }
+.pipe-flow-title { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+.pipe-flow-nodes { display: flex; align-items: center; flex-wrap: wrap; gap: 0; }
+.pipe-node {
+  font-family: ui-monospace, monospace; font-size: 11px; color: var(--mid);
+  background: var(--card2); border: 1px solid var(--border); border-radius: 6px;
+  padding: 7px 11px; white-space: nowrap; flex-shrink: 0;
+  transition: border-color 0.2s, color 0.2s;
+}
+.pipe-node:hover { border-color: var(--accent-line); color: var(--accent); }
+.pipe-node-conn {
+  flex: 1; min-width: 20px; height: 1px; position: relative; overflow: hidden;
+  background: var(--border); margin: 0 4px;
+}
+.pipe-node-conn::after {
+  content: ""; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  animation: flowPulse 2.4s ease-in-out infinite;
+}
+.pipe-node-conn:nth-child(4n)::after  { animation-delay: 0.6s; }
+.pipe-node-conn:nth-child(4n+2)::after { animation-delay: 1.2s; }
+.pipe-node-conn:nth-child(4n+3)::after { animation-delay: 1.8s; }
+@keyframes flowPulse { 0% { left: -100%; } 100% { left: 160%; } }
+.pipe-flow-sub { font-size: 12px; color: var(--muted); margin-top: 16px; line-height: 1.6; padding-top: 14px; border-top: 1px solid var(--border); }
+
+/* Output cards (step 3) */
+.pipe-out-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pipe-out-card { background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; transition: border-color 0.2s var(--ease); }
+.pipe-out-card:hover { border-color: var(--border2); }
+.poc-label { font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.poc-row { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; font-size: 11px; color: var(--mid); }
+.poc-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.poc-dot.behind { background: var(--gold); }
+.poc-dot.ok     { background: #22c55e; }
+.poc-dot.ahead  { background: #60a5fa; }
+.poc-val { font-family: ui-monospace, monospace; font-size: 10px; }
+.poc-metric { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.poc-k { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-family: 'Syne', sans-serif; }
+.poc-v { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; color: #fff; }
+.poc-v.warn { color: var(--gold); }
+
+/* ── FAQ ACCORDION ── */
+.faq-accordion { display: flex; flex-direction: column; margin-top: 48px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.faq-acc-item { border-bottom: 1px solid var(--border); }
+.faq-acc-item:last-child { border-bottom: none; }
+.faq-acc-q {
+  width: 100%; text-align: left; background: none; border: none; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 24px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; color: #fff;
+  transition: background 0.15s var(--ease);
+}
+.faq-acc-q:hover { background: var(--card); }
+.faq-acc-icon { font-size: 18px; color: var(--muted); flex-shrink: 0; margin-left: 16px; transition: transform 0.25s var(--ease), color 0.15s; line-height: 1; }
+.faq-acc-item.open .faq-acc-icon { transform: rotate(45deg); color: var(--accent); }
+.faq-acc-body {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.35s var(--ease), padding 0.2s var(--ease);
+}
+.faq-acc-item.open .faq-acc-body { max-height: 300px; }
+.faq-acc-answer { padding: 0 24px 20px; font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── DIARY JSON glow ── */
+.diary-json { position: relative; }
+.diary-json::before {
+  content: ""; position: absolute; inset: -20px; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(91,140,255,0.08), transparent 70%);
+  border-radius: 20px;
+}
+
 /* Responsive for new sections */
 @media (max-width: 860px) {
   .vprops, .why-grid, .analytics-grid, .diary-grid { grid-template-columns: 1fr; }
   .evm-row { grid-template-columns: repeat(2, 1fr); }
   .nav-links a.active::after { display: none; }
+  .pipe-step { grid-template-columns: 1fr; gap: 32px; }
+  .pipe-step-num { font-size: 52px; }
+  .pipe-out-grid { grid-template-columns: 1fr; }
+  .pipe-flow-nodes { flex-wrap: wrap; gap: 6px; }
+  .pipe-node-conn { display: none; }
 }
 @media (max-width: 560px) {
   .vprops { padding: 0 16px; }
@@ -836,10 +996,10 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
   </div>
 
   <div class="scene-legend">
-    <div class="legend-row"><div class="legend-sq" style="background:#fff"></div>Behind schedule</div>
-    <div class="legend-row"><div class="legend-sq" style="background:#888"></div>On track</div>
-    <div class="legend-row"><div class="legend-sq" style="background:#bbb"></div>Ahead</div>
-    <div class="legend-row"><div class="legend-sq" style="background:#222;border:1px dashed #444"></div>Not started</div>
+    <div class="legend-row"><div class="legend-sq" style="background:#f59e0b"></div>Behind schedule</div>
+    <div class="legend-row"><div class="legend-sq" style="background:#22c55e"></div>On track</div>
+    <div class="legend-row"><div class="legend-sq" style="background:#60a5fa"></div>Ahead</div>
+    <div class="legend-row"><div class="legend-sq" style="background:#1e293b;border:1px dashed #334155"></div>Not started</div>
   </div>
   <div class="scene-hint">Drag to orbit · Scroll to zoom · Click a floor to inspect</div>
 </div><!-- /scene-wrap -->
@@ -851,28 +1011,104 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
   <div class="section-full">
     <div class="section-narrow" style="margin-bottom:0">
       <div class="section-label">How It Works</div>
-      <h2>Capture. Analyze. <em>Act.</em></h2>
-      <p class="section-body">Three inputs. One automated pipeline. No manual reconciliation.</p>
+      <h2>Three inputs.<br><em>One result you can act on.</em></h2>
     </div>
-    <div class="steps">
-      <div>
-        <div class="step-num">01 — Capture</div>
-        <div class="step-title">Walk the site with a 360° camera</div>
-        <p class="step-body">Upload the video alongside your IFC BIM model and Primavera P6 schedule. No special equipment or configuration needed.</p>
-        <div class="step-tags"><span class="step-tag">360° Video</span><span class="step-tag">IFC / BIM</span><span class="step-tag">P6 XER / XML</span></div>
+    <div class="pipeline">
+
+      <!-- Step 1: Capture -->
+      <div class="pipe-step reveal">
+        <div class="pipe-step-text">
+          <span class="pipe-step-num">01</span>
+          <div class="pipe-step-label">Capture</div>
+          <div class="pipe-step-title">Walk the site.<br>Upload what you have.</div>
+          <p class="pipe-step-body">Record a 360° walkthrough with any camera — or standard video. Upload it alongside your IFC model and Primavera P6 schedule. Miqyas handles the rest. No special equipment, no new workflow.</p>
+        </div>
+        <div class="pipe-step-vis">
+          <div class="pipe-file-stack">
+            <div class="pipe-file-card">
+              <div class="pfc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/></svg></div>
+              <div class="pfc-info"><div class="pfc-name">site_walk_2025-06.mp4</div><div class="pfc-meta">360° Site Video · any camera</div></div>
+              <div class="pfc-badge in">INPUT</div>
+            </div>
+            <div class="pipe-file-card">
+              <div class="pfc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+              <div class="pfc-info"><div class="pfc-name">building_model.ifc</div><div class="pfc-meta">174 elements · IFC 4 · Revit export</div></div>
+              <div class="pfc-badge in">INPUT</div>
+            </div>
+            <div class="pipe-file-card">
+              <div class="pfc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+              <div class="pfc-info"><div class="pfc-name">schedule_v7.xer</div><div class="pfc-meta">312 activities · Primavera P6</div></div>
+              <div class="pfc-badge in">INPUT</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div>
-        <div class="step-num">02 — Analyze</div>
-        <div class="step-title">AI compares reality to plan</div>
-        <p class="step-body">Miqyas extracts frames, reconstructs camera poses via COLMAP, and runs Mask2Former segmentation against your BIM model.</p>
-        <div class="step-tags"><span class="step-tag">COLMAP</span><span class="step-tag">Mask2Former</span><span class="step-tag">IoU Compare</span></div>
+
+      <!-- Step 2: Analyze -->
+      <div class="pipe-step reveal d1">
+        <div class="pipe-step-text">
+          <span class="pipe-step-num">02</span>
+          <div class="pipe-step-label">Analyze</div>
+          <div class="pipe-step-title">AI maps reality<br>to your model.</div>
+          <p class="pipe-step-body">Miqyas extracts frames, reconstructs camera positions using Structure-from-Motion, then segments what's built using computer vision and measures it element-by-element against your BIM geometry.</p>
+        </div>
+        <div class="pipe-step-vis">
+          <div class="pipe-flow-wrap">
+            <div class="pipe-flow-title">Processing pipeline</div>
+            <div class="pipe-flow-nodes">
+              <div class="pipe-node">Frame extract</div>
+              <div class="pipe-node-conn"></div>
+              <div class="pipe-node">Camera align</div>
+              <div class="pipe-node-conn"></div>
+              <div class="pipe-node">Segment</div>
+              <div class="pipe-node-conn"></div>
+              <div class="pipe-node">IoU compare</div>
+              <div class="pipe-node-conn"></div>
+              <div class="pipe-node">Classify</div>
+            </div>
+            <div class="pipe-flow-sub">Each element is classified: <span style="color:var(--gold)">behind</span> · <span style="color:#22c55e">on-track</span> · <span style="color:#60a5fa">ahead</span> · <span style="color:var(--muted)">not started</span> — cross-referenced with your P6 schedule and critical path.</div>
+          </div>
+        </div>
       </div>
-      <div>
-        <div class="step-num">03 — Act</div>
-        <div class="step-title">Reports and Procore RFIs</div>
-        <p class="step-body">Per-element deviation reports with critical path impact. Push directly to Procore as RFIs or export as PDF for the owner meeting.</p>
-        <div class="step-tags"><span class="step-tag">PDF Reports</span><span class="step-tag">Procore RFI</span><span class="step-tag">Critical Path</span></div>
+
+      <!-- Step 3: Act -->
+      <div class="pipe-step reveal d2">
+        <div class="pipe-step-text">
+          <span class="pipe-step-num">03</span>
+          <div class="pipe-step-label">Act</div>
+          <div class="pipe-step-title">Reports, deviations,<br>Procore RFIs.</div>
+          <p class="pipe-step-body">Get an executive dashboard, EVM metrics, delay forecast, and per-element deviation breakdown. Push deviations directly to Procore as RFIs in one click — or export the full report as PDF.</p>
+        </div>
+        <div class="pipe-step-vis">
+          <div class="pipe-out-grid">
+            <div class="pipe-out-card">
+              <div class="poc-label">Deviation report</div>
+              <div class="poc-row"><span class="poc-dot behind"></span><span class="poc-val">L3 Steel Frame — 6d behind</span></div>
+              <div class="poc-row"><span class="poc-dot ok"></span><span class="poc-val">L1 Structural — on track</span></div>
+              <div class="poc-row"><span class="poc-dot ahead"></span><span class="poc-val">L4 Concrete — 2d ahead</span></div>
+            </div>
+            <div class="pipe-out-card">
+              <div class="poc-label">Procore RFI</div>
+              <div class="poc-row" style="margin-bottom:8px"><span class="poc-dot behind"></span><span style="font-size:11px;color:#fff;font-weight:500">RFI #237 pushed</span></div>
+              <div class="poc-row"><span class="poc-val" style="color:var(--muted)">Activity A-1042 · Level 3</span></div>
+              <div class="poc-row"><span class="poc-val" style="color:var(--muted)">Pushed 1 min ago</span></div>
+            </div>
+            <div class="pipe-out-card">
+              <div class="poc-label">Earned Value</div>
+              <div class="poc-metric"><span class="poc-k">SPI</span><span class="poc-v warn">0.91</span></div>
+              <div class="poc-metric"><span class="poc-k">CPI</span><span class="poc-v" style="color:#22c55e">1.04</span></div>
+              <div class="poc-metric"><span class="poc-k">EAC</span><span class="poc-v">$8.4M</span></div>
+            </div>
+            <div class="pipe-out-card">
+              <div class="poc-label">PDF Export</div>
+              <div class="poc-row" style="margin-bottom:8px"><span class="poc-dot ok"></span><span style="font-size:11px;color:#fff">Executive summary</span></div>
+              <div class="poc-row"><span class="poc-val">174 elements · 5 levels</span></div>
+              <div class="poc-row"><span class="poc-val" style="color:var(--muted)">Ready for owner meeting</span></div>
+            </div>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 </div>
@@ -917,22 +1153,22 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
     </div>
     <div class="features">
       <div class="feature">
-        <div class="feature-icon">🔍</div>
+        <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="21" cy="21" r="8"/><circle cx="21" cy="21" r="14" stroke-opacity="0.3"/><line x1="21" y1="4" x2="21" y2="7"/><line x1="21" y1="35" x2="21" y2="38"/><line x1="4" y1="21" x2="7" y2="21"/><line x1="35" y1="21" x2="38" y2="21"/><circle cx="21" cy="21" r="2.5" fill="var(--accent)" stroke="none"/></svg></div>
         <h3>AI Deviation Detection</h3>
-        <p>Mask2Former identifies elements across 13 construction categories. IoU scoring flags behind, ahead, and not-started elements automatically — no manual annotations.</p>
+        <p>Computer vision identifies elements across 13 construction categories. IoU scoring flags behind, ahead, and not-started elements automatically — no manual annotations.</p>
       </div>
       <div class="feature">
-        <div class="feature-icon">📅</div>
+        <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="21" cy="9" r="3"/><circle cx="9" cy="30" r="3"/><circle cx="33" cy="30" r="3"/><line x1="21" y1="12" x2="21" y2="20"/><line x1="21" y1="20" x2="9" y2="27"/><line x1="21" y1="20" x2="33" y2="27"/><line x1="9" y1="20" x2="9" y2="27" stroke-dasharray="3 3" stroke-opacity="0.4"/></svg></div>
         <h3>Critical Path Analysis</h3>
         <p>Deviations are cross-referenced with your P6 schedule. A delay on a float-rich beam is noise. The same delay on the core wall is a crisis. We tell you which is which.</p>
       </div>
       <div class="feature">
-        <div class="feature-icon">🏗️</div>
+        <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5l16 9v14L21 37 5 28V14z"/><path d="M21 5v32M5 14l16 9 16-9" stroke-opacity="0.4"/><circle cx="21" cy="23" r="2.5" fill="var(--accent)" stroke="none"/></svg></div>
         <h3>Interactive 3D BIM Viewer</h3>
-        <p>Real IFC geometry in Three.js — not bounding boxes. Click any element to inspect IoU score, deviation status, and linked schedule activity. Toggle by level or category.</p>
+        <p>Real IFC geometry rendered in the browser — not bounding boxes. Click any element to inspect its IoU score, deviation status, and linked schedule activity.</p>
       </div>
       <div class="feature">
-        <div class="feature-icon">🔗</div>
+        <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="24" y="24" width="12" height="12" rx="2"/><path d="M18 12h6a6 6 0 016 6v6" stroke-opacity="0.6"/><circle cx="12" cy="12" r="2" fill="var(--accent)" stroke="none"/><circle cx="30" cy="30" r="2" fill="var(--accent)" stroke="none"/></svg></div>
         <h3>Procore Integration</h3>
         <p>OAuth2 connect, configure field mapping once, then bulk-push deviations as RFIs or Issues in one click. Full audit trail on both sides.</p>
       </div>
@@ -993,26 +1229,26 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
       <div class="section-label">FAQ</div>
       <h2>Common questions</h2>
     </div>
-    <div class="faq-list">
-      <div class="faq-item">
-        <div class="faq-q">What do I need to get started?</div>
-        <div class="faq-a">Three things you likely already have: an IFC model from Revit, ArchiCAD, or Tekla; a Primavera P6 schedule (XER or XML); and a site walkthrough on any video or 360° camera.</div>
+    <div class="faq-accordion">
+      <div class="faq-acc-item">
+        <button class="faq-acc-q">What do I need to get started?<span class="faq-acc-icon">+</span></button>
+        <div class="faq-acc-body"><div class="faq-acc-answer">Three things you likely already have: an IFC model from Revit, ArchiCAD, or Tekla; a Primavera P6 schedule (XER or XML); and a site walkthrough on any video or 360° camera.</div></div>
       </div>
-      <div class="faq-item">
-        <div class="faq-q">How does the Procore integration work?</div>
-        <div class="faq-a">Connect via OAuth2 in under 2 minutes. Map fields once. Then bulk-push any deviation report to Procore as RFIs with a full audit trail on both sides.</div>
+      <div class="faq-acc-item">
+        <button class="faq-acc-q">How does the Procore integration work?<span class="faq-acc-icon">+</span></button>
+        <div class="faq-acc-body"><div class="faq-acc-answer">Connect via OAuth2 in under 2 minutes. Map fields once. Then bulk-push any deviation report to Procore as RFIs with a full audit trail on both sides.</div></div>
       </div>
-      <div class="faq-item">
-        <div class="faq-q">How accurate is the deviation detection?</div>
-        <div class="faq-a">Every result is BIM-grounded, deterministic, and human-verifiable — each element carries a confidence score and traces to the exact frame it was observed in, so a PM can confirm any number directly.</div>
+      <div class="faq-acc-item">
+        <button class="faq-acc-q">How accurate is the deviation detection?<span class="faq-acc-icon">+</span></button>
+        <div class="faq-acc-body"><div class="faq-acc-answer">Every result is BIM-grounded, deterministic, and human-verifiable — each element carries a confidence score and traces to the exact frame it was observed in, so a PM can confirm any number directly.</div></div>
       </div>
-      <div class="faq-item">
-        <div class="faq-q">Can I re-run an analysis and get the same result?</div>
-        <div class="faq-a">Yes — that's by design. The same input always produces byte-identical output via a content-hash cache over a pinned local model. Critical when a number drives a payment claim or a dispute.</div>
+      <div class="faq-acc-item">
+        <button class="faq-acc-q">Can I re-run an analysis and get the same result?<span class="faq-acc-icon">+</span></button>
+        <div class="faq-acc-body"><div class="faq-acc-answer">Yes — that's by design. The same input always produces byte-identical output via a content-hash cache over a pinned local model. Critical when a number drives a payment claim or a dispute.</div></div>
       </div>
-      <div class="faq-item">
-        <div class="faq-q">What's the ROI case?</div>
-        <div class="faq-a">The value is in catching critical-path slips early — fixing a deviation late costs several times more than catching it early. We'd rather measure the impact with you in a pilot than quote a number we can't back up.</div>
+      <div class="faq-acc-item">
+        <button class="faq-acc-q">What's the ROI case?<span class="faq-acc-icon">+</span></button>
+        <div class="faq-acc-body"><div class="faq-acc-answer">The value is in catching critical-path slips early — fixing a deviation late costs several times more than catching it early. We'd rather measure the impact with you in a pilot than quote a number we can't back up.</div></div>
       </div>
     </div>
   </div>
@@ -1184,6 +1420,15 @@ formEl.addEventListener('submit', async e => {
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-acc-item').forEach(function(item) {
+    item.querySelector('.faq-acc-q').addEventListener('click', function() {
+      var isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-acc-item.open').forEach(function(o) { o.classList.remove('open'); });
+      if (!isOpen) item.classList.add('open');
+    });
+  });
 })();
 </script>
 
@@ -1210,14 +1455,14 @@ const FLOORS = [
 ];
 
 const STATUS = {
-  on_track:    { color: 0x707070, emissive: 0x000000, opacity: 0.88, label: 'On Track'        },
-  behind:      { color: 0xffffff, emissive: 0xbbbbbb, opacity: 1.00, label: 'Behind Schedule'  },
-  ahead:       { color: 0xd0d0d0, emissive: 0x303030, opacity: 0.95, label: 'Ahead'            },
-  not_started: { color: 0x181818, emissive: 0x000000, opacity: 0.65, label: 'Not Started'     },
+  on_track:    { color: 0x16a34a, emissive: 0x14532d, opacity: 0.88, label: 'On Track'        },
+  behind:      { color: 0xd97706, emissive: 0x78350f, opacity: 1.00, label: 'Behind Schedule'  },
+  ahead:       { color: 0x2563eb, emissive: 0x1e3a8a, opacity: 0.95, label: 'Ahead'           },
+  not_started: { color: 0x1e293b, emissive: 0x000000, opacity: 0.55, label: 'Not Started'     },
 };
 
-// Per-floor accent tones (within status palette, for visual variety)
-const FLOOR_TONES = [0x6a6a6a, 0x808080, 0xffffff, 0xd8d8d8, 0x141414];
+// Per-floor accent tones
+const FLOOR_TONES = [0x22c55e, 0x4ade80, 0xf59e0b, 0x60a5fa, 0x334155];
 
 /* ── SCENE SETUP ── */
 const wrap   = document.querySelector('.scene-wrap');
@@ -1229,8 +1474,8 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x000000);
-scene.fog = new THREE.FogExp2(0x000000, 0.018);
+scene.background = new THREE.Color(0x040a18);
+scene.fog = new THREE.FogExp2(0x040a18, 0.009);
 
 const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 400);
 camera.position.set(26, 22, 34);
@@ -1260,9 +1505,9 @@ let userTouched = false;
 controls.addEventListener('start', () => { userTouched = true; controls.autoRotate = false; });
 
 /* ── LIGHTS ── */
-scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+scene.add(new THREE.AmbientLight(0xd0e4ff, 0.45));
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
+const dirLight = new THREE.DirectionalLight(0xffecd0, 1.1);
 dirLight.position.set(20, 30, 15);
 dirLight.castShadow = true;
 dirLight.shadow.mapSize.set(2048, 2048);
@@ -1274,19 +1519,23 @@ dirLight.shadow.camera.top = 30;
 dirLight.shadow.camera.bottom = -30;
 scene.add(dirLight);
 
-const fillLight = new THREE.DirectionalLight(0xffffff, 0.2);
-fillLight.position.set(-15, 10, -10);
+const fillLight = new THREE.DirectionalLight(0x2040a0, 0.5);
+fillLight.position.set(-15, 5, -10);
 scene.add(fillLight);
+
+const rimLight = new THREE.DirectionalLight(0x4060ff, 0.3);
+rimLight.position.set(0, -5, -20);
+scene.add(rimLight);
 
 /* ── GROUND ── */
 const groundGeo = new THREE.PlaneGeometry(120, 120);
-const groundMat = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 1 });
+const groundMat = new THREE.MeshStandardMaterial({ color: 0x040a18, roughness: 1 });
 const ground = new THREE.Mesh(groundGeo, groundMat);
 ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
 scene.add(ground);
 
-const grid = new THREE.GridHelper(80, 40, 0x1a1a1a, 0x111111);
+const grid = new THREE.GridHelper(80, 40, 0x0d1a35, 0x0a1428);
 grid.position.y = 0.01;
 scene.add(grid);
 
@@ -1406,7 +1655,7 @@ const slabs = [];
 
 // Spot light aimed at "behind" floor (level 3, index 2)
 const behindY = 3 * FH;
-const spotLight = new THREE.SpotLight(0xffffff, 3.5, 30, Math.PI / 10, 0.5, 1.5);
+const spotLight = new THREE.SpotLight(0xffc060, 4.0, 35, Math.PI / 9, 0.5, 1.5);
 spotLight.position.set(4, behindY + 9, D + 7);
 spotLight.target.position.set(0, behindY, 0);
 spotLight.castShadow = false;
@@ -1468,30 +1717,49 @@ FLOORS.forEach((data, i) => {
   // Curtain wall facade
   addCurtainWall(y, data.status);
 
-  // Alert rings — "behind"
+  // Alert rings — "behind" (amber)
   if (data.status === 'behind') {
     const r1 = new THREE.Mesh(
       new THREE.BoxGeometry(W + 1.4, 0.06, D + 1.4),
-      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.6 })
+      new THREE.MeshBasicMaterial({ color: 0xe8a94a, transparent: true, opacity: 0.7 })
     );
     r1.position.set(0, y - 0.14, 0);
     r1.userData.isRing = true;
     scene.add(r1); slabs.push(r1);
     const r2 = new THREE.Mesh(
-      new THREE.BoxGeometry(W + 2.4, 0.02, D + 2.4),
-      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.12 })
+      new THREE.BoxGeometry(W + 2.8, 0.02, D + 2.8),
+      new THREE.MeshBasicMaterial({ color: 0xe8a94a, transparent: true, opacity: 0.15 })
     );
     r2.position.set(0, y - 0.14, 0);
     scene.add(r2);
   }
-  // Highlight — "ahead"
+  // Highlight — "ahead" (blue)
   if (data.status === 'ahead') {
     const aRing = new THREE.Mesh(
       new THREE.BoxGeometry(W + 0.8, 0.03, D + 0.8),
-      new THREE.MeshBasicMaterial({ color: 0xcccccc, transparent: true, opacity: 0.3 })
+      new THREE.MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.4 })
     );
     aRing.position.set(0, y + 0.17, 0);
     scene.add(aRing);
+  }
+
+  // Progress bar above each slab (width proportional to IoU)
+  if (data.iou !== null) {
+    const barW = (W - 1) * data.iou;
+    const barColor = data.status === 'behind' ? 0xe8a94a : data.status === 'ahead' ? 0x3b82f6 : 0x22c55e;
+    const bar = new THREE.Mesh(
+      new THREE.BoxGeometry(barW, 0.09, 0.22),
+      new THREE.MeshBasicMaterial({ color: barColor, transparent: true, opacity: 0.75 })
+    );
+    bar.position.set(-W / 2 + barW / 2 + 0.5, y + 0.21, D / 2 + 0.4);
+    scene.add(bar);
+    // Track bg
+    const barBg = new THREE.Mesh(
+      new THREE.BoxGeometry(W - 1, 0.06, 0.14),
+      new THREE.MeshBasicMaterial({ color: 0x1e293b, transparent: true, opacity: 0.6 })
+    );
+    barBg.position.set(0, y + 0.21, D / 2 + 0.4);
+    scene.add(barBg);
   }
 
   // Wireframe + rebar — "not_started"
@@ -1523,6 +1791,70 @@ FLOORS.forEach((data, i) => {
     });
   }
 });
+
+// ── FLOOR LABEL SPRITES ──
+function makeLabel(text, color) {
+  const cv = document.createElement('canvas');
+  cv.width = 280; cv.height = 64;
+  const cx = cv.getContext('2d');
+  cx.clearRect(0, 0, cv.width, cv.height);
+  cx.fillStyle = 'rgba(4,10,24,0.82)';
+  cx.roundRect(0, 0, cv.width, cv.height, 10);
+  cx.fill();
+  cx.strokeStyle = color;
+  cx.lineWidth = 2;
+  cx.roundRect(1, 1, cv.width - 2, cv.height - 2, 10);
+  cx.stroke();
+  cx.font = 'bold 18px "DM Sans", system-ui, sans-serif';
+  cx.fillStyle = '#ffffff';
+  cx.textBaseline = 'middle';
+  cx.fillText(text, 14, cv.height / 2);
+  const tex = new THREE.CanvasTexture(cv);
+  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+  const sp = new THREE.Sprite(mat);
+  sp.scale.set(4.2, 0.96, 1);
+  return sp;
+}
+const labelColors = { on_track: '#22c55e', behind: '#e8a94a', ahead: '#60a5fa', not_started: '#4b5563' };
+FLOORS.forEach((data, i) => {
+  const y = (i + 1) * FH;
+  const sp = makeLabel(data.label, labelColors[data.status]);
+  sp.position.set(-W / 2 - 4.8, y + 0.8, 0);
+  scene.add(sp);
+});
+
+// ── SECOND BUILDING (adjacent, shows neighbouring context) ──
+const W2 = 9, D2 = 7, FH2 = 3.6;
+const b2X = W / 2 + 8;
+const b2Floors = 4;
+const b2Mat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.7, metalness: 0.1 });
+const b2ColMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6, metalness: 0.3 });
+// Columns
+[-W2/2, W2/2].forEach(cx => [-D2/2, D2/2].forEach(cz => {
+  const c = new THREE.Mesh(new THREE.BoxGeometry(0.35, b2Floors * FH2 + 0.5, 0.35), b2ColMat);
+  c.position.set(b2X + cx, (b2Floors * FH2 + 0.5) / 2, cz);
+  scene.add(c);
+}));
+// Slabs
+for (let fi = 1; fi <= b2Floors; fi++) {
+  const sy = fi * FH2;
+  const s = new THREE.Mesh(new THREE.BoxGeometry(W2 + 0.2, 0.24, D2 + 0.2), b2Mat);
+  s.position.set(b2X, sy, 0);
+  scene.add(s);
+  // Curtain-wall glass (simpler)
+  const glassMat2 = new THREE.MeshStandardMaterial({
+    color: fi <= 2 ? 0x0a2040 : 0x071830,
+    roughness: 0.05, metalness: 0.85, transparent: true, opacity: 0.6
+  });
+  const gp = new THREE.Mesh(new THREE.BoxGeometry(W2 - 0.4, FH2 - 0.35, 0.04), glassMat2);
+  gp.position.set(b2X, sy - FH2 * 0.45, D2 / 2 + 0.04);
+  scene.add(gp);
+}
+// Roof
+const b2Roof = new THREE.Mesh(new THREE.BoxGeometry(W2 + 0.5, 0.35, D2 + 0.5),
+  new THREE.MeshStandardMaterial({ color: 0x0e1a2d, roughness: 0.9 }));
+b2Roof.position.set(b2X, b2Floors * FH2 + 0.18, 0);
+scene.add(b2Roof);
 
 // ── CRANE (rotating head) ──
 const craneMat = new THREE.MeshStandardMaterial({ color: 0x2c2c2c, roughness: 0.7, metalness: 0.45 });
@@ -1757,8 +2089,8 @@ for (let p = 0; p < PTCL_COUNT; p++) {
 }
 ptclGeo.setAttribute('position', new THREE.BufferAttribute(ptclPos, 3));
 const ptclMat = new THREE.PointsMaterial({
-  color: 0x444444, size: 0.14,
-  transparent: true, opacity: 0.35, sizeAttenuation: true,
+  color: 0x4488ff, size: 0.14,
+  transparent: true, opacity: 0.28, sizeAttenuation: true,
 });
 const particles = new THREE.Points(ptclGeo, ptclMat);
 scene.add(particles);
@@ -1812,7 +2144,7 @@ function openPanel(data) {
 
   document.getElementById('p-activity').textContent = data.activity + (data.critical ? ' · Critical Path' : '');
   document.getElementById('p-sched').textContent = data.sched;
-  document.getElementById('p-crit').textContent = data.critical ? '⚠ Yes — impacts completion date' : 'No — has float';
+  document.getElementById('p-crit').textContent = data.critical ? 'Yes — impacts completion date' : 'No — has float';
   document.getElementById('p-rec').textContent = data.rec;
 
   panel.style.display = 'block';
@@ -1896,10 +2228,10 @@ const clock = new THREE.Clock();
   // Pulse "behind" slabs + spotlight intensity
   slabs.forEach(mesh => {
     if (mesh.userData.status === 'behind' && mesh !== selectedSlab && mesh !== hoveredSlab) {
-      mesh.material.emissiveIntensity = 0.22 + 0.28 * Math.sin(t * 2.8);
+      mesh.material.emissiveIntensity = 0.30 + 0.40 * Math.sin(t * 2.8);
     }
   });
-  spotLight.intensity = 3.0 + 1.5 * Math.sin(t * 2.8);
+  spotLight.intensity = 3.5 + 2.0 * Math.sin(t * 2.8);
 
   // Drift particles upward, reset when they reach top
   const pos = particles.geometry.attributes.position;
