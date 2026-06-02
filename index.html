@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Miqyas — AI Construction Progress Tracking</title>
+<title>Miqyas — Know what's actually built</title>
 <meta name="description" content="Upload a site video, BIM model, and schedule. Miqyas surfaces every deviation before it becomes a cost overrun." />
 <link rel="preload" as="image" href="https://images.unsplash.com/photo-1739900345763-391d9b62c938?w=1920&q=88&auto=format&fit=crop" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -98,10 +98,6 @@ nav {
   max-width: 760px; margin: 0 auto;
   padding: 80px 24px 56px; text-align: center;
 }
-.hero-label {
-  font-size: 12px; font-weight: 500; color: var(--muted);
-  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px;
-}
 .hero h1 {
   font-family: 'Fraunces', serif;
   font-size: clamp(44px, 6.5vw, 80px);
@@ -110,8 +106,8 @@ nav {
 }
 .hero h1 em { font-style: italic; color: rgba(255,255,255,0.48); font-weight: 300; }
 .hero-sub {
-  font-size: 17px; color: var(--muted); line-height: 1.7;
-  max-width: 500px; margin: 0 auto 36px; font-weight: 300;
+  font-size: 18px; color: var(--muted); line-height: 1.65;
+  max-width: 520px; margin: 0 auto 40px; font-weight: 400;
 }
 .hero-cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
 .btn-demo {
@@ -133,25 +129,13 @@ nav {
 .hero-note { font-size: 12px; color: var(--muted); }
 
 /* ── 3D SCENE ── */
-/* ── SCENE SECTION CONTAINER ── */
-.scene-section {
-  padding: 56px 24px 64px;
-}
-.scene-section-label {
-  text-align: center;
-  font-size: 11px; font-weight: 500; color: var(--muted);
-  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px;
-}
+.scene-section { padding: 40px 24px 48px; }
 .scene-section-title {
   text-align: center;
   font-family: 'Fraunces', serif;
-  font-size: clamp(24px, 3.5vw, 38px);
-  font-weight: 600; color: #fff; letter-spacing: -0.025em;
-  margin-bottom: 6px;
-}
-.scene-section-sub {
-  text-align: center;
-  font-size: 15px; color: var(--muted); margin-bottom: 32px;
+  font-size: clamp(20px, 2.5vw, 28px);
+  font-weight: 400; color: rgba(255,255,255,0.55); letter-spacing: -0.01em;
+  margin-bottom: 20px; font-style: italic;
 }
 .scene-wrap {
   position: relative;
@@ -585,7 +569,6 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
   position: relative; z-index: 1;
 }
 .hero-wrap .hero::before { display: none; }
-.hero-wrap .hero-label { color: rgba(255,255,255,0.52); letter-spacing: 0.1em; }
 .hero-wrap .hero-sub { color: rgba(255,255,255,0.60); }
 .hero-wrap .hero-note { color: rgba(255,255,255,0.34); }
 .hero-wrap .hstat-l { color: rgba(255,255,255,0.42); }
@@ -614,7 +597,6 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
 
 /* Section label — clean, no tick */
 .section-label { display: block; }
-.scene-section-label, .hero-label, .modal-eyebrow { }
 
 /* Scene container: subtle accent ring */
 .scene-wrap { box-shadow: 0 0 0 1px rgba(91,140,255,0.06), 0 24px 64px rgba(0,0,0,0.6); }
@@ -744,8 +726,8 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
 .pipe-step:first-child { border-top: none; }
 
 .pipe-step-num {
-  font-family: 'Fraunces', serif; font-size: 80px; font-weight: 600; line-height: 1;
-  color: var(--gold); opacity: 0.25; letter-spacing: -0.04em;
+  font-family: 'Fraunces', serif; font-size: 64px; font-weight: 600; line-height: 1;
+  color: var(--gold); opacity: 0.40; letter-spacing: -0.04em;
   margin-bottom: 10px; display: block;
 }
 .pipe-step-label {
@@ -854,19 +836,6 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
   * { scroll-behavior: auto !important; }
 }
 
-/* ── HERO BADGE ── */
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(91,140,255,0.10); border: 1px solid rgba(91,140,255,0.22);
-  border-radius: 999px; padding: 6px 16px;
-  font-size: 11.5px; font-weight: 500; color: rgba(255,255,255,0.62);
-  letter-spacing: 0.07em; text-transform: uppercase;
-  backdrop-filter: blur(8px);
-}
-.hero-badge::before {
-  content: ""; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--accent); box-shadow: 0 0 10px var(--accent); flex-shrink: 0;
-}
 
 /* ── SECTION AMBIENT GLOWS ── */
 /* Why Miqyas gets a blue halo above it */
@@ -916,9 +885,8 @@ footer { padding: 52px 24px 40px; }
 
     <!-- Form view -->
     <div id="modalForm">
-      <div class="modal-eyebrow">Get early access</div>
-      <div class="modal-title">Request a demo</div>
-      <div class="modal-sub">We'll reach out within 24 hours to schedule a walkthrough.</div>
+      <div class="modal-title">Book a pilot</div>
+      <div class="modal-sub">We'll set up the pilot with your actual project data. Reach out within 24 hours.</div>
 
       <div class="form-error" id="formError">Something went wrong — please try again or email us directly.</div>
 
@@ -970,7 +938,7 @@ footer { padding: 52px 24px 40px; }
         </div>
 
         <button class="form-submit" id="formSubmitBtn" type="submit">
-          <span id="submitLabel">Request Demo →</span>
+          <span id="submitLabel">Book a pilot</span>
         </button>
         <p class="form-note">No credit card · No spam · <a href="mailto:Miqyasdev@gmail.com">Or just email us</a></p>
       </form>
@@ -998,7 +966,7 @@ footer { padding: 52px 24px 40px; }
     <li><a href="#faq">FAQ</a></li>
   </ul>
   <div class="nav-right">
-    <button class="nav-cta" onclick="openModal()">Request Demo</button>
+    <button class="nav-cta" onclick="openModal()">Book a pilot</button>
   </div>
 </nav>
 
@@ -1006,12 +974,11 @@ footer { padding: 52px 24px 40px; }
 <div class="hero-wrap">
 <div class="hero-overlay"></div>
 <div class="hero">
-  <div class="hero-label"><span class="hero-badge">AI construction analytics</span></div>
   <h1>See how much of your building<br><em>is actually built</em></h1>
-  <p class="hero-sub">Feed it a 360° walkthrough, your IFC model, and your P6 schedule. Get element-level progress, deviation flags, and a forecast — grounded in your model, not an eyeball.</p>
+  <p class="hero-sub">Compares your site video to your BIM model and schedule — and tells you, element by element, what's done, what's behind, and when you'll finish.</p>
   <div class="hero-cta-row">
-    <button class="btn-demo" onclick="openModal()">Request a demo →</button>
-    <a href="#how" class="btn-sec">See how it works</a>
+    <button class="btn-demo" onclick="openModal()">Book a pilot</button>
+    <a href="#how" class="btn-sec">How it works</a>
   </div>
   <div class="hero-stats-strip">
     <div class="hstat"><span class="hstat-n">89%</span><span class="hstat-l">of large projects exceed budget or schedule</span></div>
@@ -1025,7 +992,7 @@ footer { padding: 52px 24px 40px; }
 
 <!-- 3D BIM SCENE -->
 <div class="scene-section">
-<div class="scene-section-title">Interactive model — click any floor to inspect</div>
+<div class="scene-section-title">The model, live.</div>
 <div class="scene-wrap">
   <canvas id="bim-canvas"></canvas>
 
@@ -1067,7 +1034,7 @@ footer { padding: 52px 24px 40px; }
       <div class="panel-label">Recommendation</div>
       <div class="panel-value" id="p-rec" style="font-size:12px;color:#666;line-height:1.5"></div>
     </div>
-    <button class="panel-rfi-btn" onclick="openModal()">Request Demo →</button>
+    <button class="panel-rfi-btn" onclick="openModal()">Book a pilot</button>
   </div>
 
   <div class="scene-legend">
@@ -1194,15 +1161,15 @@ footer { padding: 52px 24px 40px; }
   <div class="section-full">
     <div class="section-narrow" style="margin-bottom:0">
       <div class="section-label">Why Miqyas</div>
-      <h2>A number you can <em>stand behind</em></h2>
-      <p class="section-body">Most tools show you pictures. Miqyas shows you a measurement — tied to your model, computed the same way every time, and written in language your team already speaks.</p>
+      <h2>Not a black box.<br><em>A measurement.</em></h2>
+      <p class="section-body">Most tools give you photos and a score. Miqyas gives you a number tied to your model, reproducible on demand, written in terms your PM and your lender already understand.</p>
     </div>
     <div class="why-grid">
       <div class="why-card reveal">
         <div class="why-kicker">Auditable &amp; deterministic</div>
         <h3>Re-run it. Get the same answer.</h3>
         <p>The same site image always produces byte-identical output — guaranteed by a content-hash cache over a pinned local model with fixed-seed, greedy decoding. When a number drives a payment claim or a dispute, you can reproduce it on demand.</p>
-        <div class="det-chip"><span class="det-dot"></span>sha256(image) → identical result</div>
+        <div class="det-chip"><span class="det-dot"></span>Same photo → same answer, always</div>
       </div>
       <div class="why-card reveal d1">
         <div class="why-kicker">BIM-grounded</div>
@@ -1224,7 +1191,7 @@ footer { padding: 52px 24px 40px; }
   <div class="section-full">
     <div class="section-narrow" style="margin-bottom:0">
       <div class="section-label">Features</div>
-      <h2>Built for the way<br><em>projects actually run.</em></h2>
+      <h2>Under<br><em>the hood.</em></h2>
     </div>
     <div class="features">
       <div class="feature">
@@ -1277,7 +1244,7 @@ footer { padding: 52px 24px 40px; }
   <div class="section-full">
     <div class="section-narrow" style="margin-bottom:0">
       <div class="section-label">FAQ</div>
-      <h2>Common questions</h2>
+      <h2>Before<br><em>you ask.</em></h2>
     </div>
     <div class="faq-accordion">
       <div class="faq-acc-item">
@@ -1306,12 +1273,12 @@ footer { padding: 52px 24px 40px; }
 
 <!-- CTA -->
 <div class="cta-section">
-  <h2>Stop guessing.<br><em>Start knowing.</em></h2>
-  <p>The demo runs on a full seed project — 174 BIM elements, a real schedule, and a complete deviation analysis. No setup required.</p>
+  <h2>Your project,<br><em>measured.</em></h2>
+  <p>The pilot runs on a complete project — real IFC model, real schedule, real deviation analysis. No setup. We configure it with you.</p>
   <div class="cta-btns">
-    <button class="btn-cta-black" onclick="openModal()">Request a demo →</button>
+    <button class="btn-cta-black" onclick="openModal()">Book a pilot</button>
   </div>
-  <p class="cta-note">No credit card · Takes 2 minutes · We'll reach out within 24 hours</p>
+  <p class="cta-note">No credit card · We'll reach out within 24 hours</p>
 </div>
 
 <!-- FOOTER -->
@@ -1346,7 +1313,7 @@ footer { padding: 52px 24px 40px; }
     </div>
     <div class="footer-bottom">
       <span>© 2026 Miqyas. All rights reserved.</span>
-      <span>Built for the construction industry.</span>
+      <span>hello@miqyas.io</span>
     </div>
   </div>
 </footer>
