@@ -15,11 +15,15 @@
 :root {
   --bg:      #03060f;
   --bg2:     #060a14;
-  --border:  rgba(255,255,255,0.08);
-  --border2: rgba(255,255,255,0.14);
+  --border:  rgba(255,255,255,0.10);
+  --border2: rgba(255,255,255,0.16);
   --text:    #f0f4ff;
-  --muted:   #6a7080;
+  --muted:   #8894a4;
   --mid:     #9aa0b0;
+
+  /* ambient glow helpers */
+  --glow-blue: rgba(91,140,255,0.15);
+  --glow-gold: rgba(232,169,74,0.12);
   --card:    #0b0f1c;
   --card2:   #101524;
   --card3:   #151c2a;
@@ -64,7 +68,7 @@ nav {
   backdrop-filter: blur(20px) saturate(160%);
   border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 52px; height: 68px;
+  padding: 0 44px; height: 68px;
 }
 /* ── LOGO ── */
 .logo { display: inline-flex; align-items: center; gap: 14px; text-decoration: none; flex-shrink: 0; }
@@ -87,7 +91,7 @@ nav {
   font-family: 'DM Sans', sans-serif;
   font-size: 14px; font-weight: 600; letter-spacing: 0; text-decoration: none; transition: opacity 0.15s, transform 0.1s;
 }
-.nav-cta:hover { opacity: 0.88; transform: translateY(-1px); }
+.nav-cta:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 6px 20px rgba(255,255,255,0.14); }
 
 /* ── HERO ── */
 .hero {
@@ -118,7 +122,7 @@ nav {
   transition: opacity 0.15s, transform 0.1s;
   display: inline-flex; align-items: center; gap: 8px;
 }
-.btn-demo:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-demo:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 8px 28px rgba(255,255,255,0.18); }
 .btn-sec {
   color: var(--mid); padding: 14px 24px; border-radius: 8px;
   font-size: 16px; text-decoration: none;
@@ -290,7 +294,7 @@ hr { border: none; border-top: 1px solid var(--border); }
 /* Features — clean list, no card grid */
 .features { display: flex; flex-direction: column; margin-top: 56px; }
 .feature {
-  display: grid; grid-template-columns: 260px 1fr; gap: 40px; align-items: flex-start;
+  display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: flex-start;
   padding: 32px 0; border-top: 1px solid var(--border);
   transition: none;
 }
@@ -327,29 +331,35 @@ hr { border: none; border-top: 1px solid var(--border); }
 
 /* CTA */
 .cta-section {
-  background: #fff; color: #000; padding: 100px 24px; text-align: center;
+  background:
+    radial-gradient(ellipse 60% 70% at 50% 50%, rgba(91,140,255,0.13), transparent 65%),
+    radial-gradient(ellipse 40% 35% at 15% 85%, rgba(232,169,74,0.07), transparent 60%),
+    var(--bg2);
+  color: #fff; padding: 110px 24px; text-align: center; position: relative;
 }
 .cta-section h2 {
   font-family: 'Fraunces', serif;
-  font-size: clamp(36px, 5vw, 58px); font-weight: 600; color: #000;
-  letter-spacing: -0.025em; line-height: 1.05; margin-bottom: 16px;
+  font-size: clamp(36px, 5vw, 64px); font-weight: 600; color: #fff;
+  letter-spacing: -0.03em; line-height: 1.02; margin-bottom: 18px;
 }
-.cta-section h2 em { font-style: italic; color: #aaa; }
-.cta-section p { font-size: 17px; color: #666; max-width: 420px; margin: 0 auto 40px; }
+.cta-section h2 em { font-style: italic; color: rgba(255,255,255,0.42); font-weight: 300; }
+.cta-section p { font-size: 17px; color: var(--muted); max-width: 440px; margin: 0 auto 44px; line-height: 1.65; }
 .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 .btn-cta-black {
-  background: #000; color: #fff; padding: 14px 32px; border-radius: 8px;
-  font-family: 'Syne', sans-serif;
-  font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-decoration: none; transition: opacity 0.15s;
+  background: #fff; color: #000; padding: 14px 32px; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 600; text-decoration: none;
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.2s;
   display: inline-flex; align-items: center; gap: 8px;
 }
-.btn-cta-black:hover { opacity: 0.82; }
+.btn-cta-black:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 8px 28px rgba(255,255,255,0.18); }
 .btn-cta-outline {
-  color: #555; padding: 14px 24px; border-radius: 8px; font-size: 16px;
-  text-decoration: none; border: 1px solid #ddd; transition: all 0.15s;
+  color: var(--mid); padding: 14px 24px; border-radius: 8px; font-size: 15px;
+  text-decoration: none; border: 1px solid var(--border2); transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
 }
-.btn-cta-outline:hover { color: #000; border-color: #999; }
-.cta-note { font-size: 13px; color: #aaa; margin-top: 20px; }
+.btn-cta-outline:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+.cta-note { font-size: 12px; color: var(--muted); margin-top: 22px; opacity: 0.7; }
 
 /* Footer */
 footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
@@ -627,11 +637,13 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
 .vprop p { font-size: 13px; color: var(--muted); line-height: 1.6; }
 
 /* ── WHY / TRUST band ── */
-.why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 56px; }
+.why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px; }
 .why-card {
-  border: 1px solid var(--border); border-radius: 12px; padding: 30px 28px; background: var(--card);
-  display: flex; flex-direction: column; gap: 12px; transition: border-color 0.2s var(--ease), transform 0.2s var(--ease); }
-.why-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+  border: 1px solid var(--border); border-radius: 12px; padding: 30px 28px;
+  background: linear-gradient(145deg, var(--card2) 0%, var(--card) 100%);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset;
+  display: flex; flex-direction: column; gap: 12px; transition: border-color 0.2s var(--ease), transform 0.2s var(--ease), box-shadow 0.25s var(--ease); }
+.why-card:hover { border-color: var(--border2); transform: translateY(-3px); box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 16px 40px rgba(0,0,0,0.35); }
 .why-kicker { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
 .why-card h3 { font-family: 'Fraunces', serif; font-size: 21px; font-weight: 600; color: #fff; letter-spacing: -0.015em; line-height: 1.2; }
 .why-card p { font-size: 13.5px; color: var(--muted); line-height: 1.65; }
@@ -786,8 +798,8 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
 .pipe-flow-sub { font-size: 12px; color: var(--muted); margin-top: 16px; line-height: 1.6; padding-top: 14px; border-top: 1px solid var(--border); }
 
 /* Output cards (step 3) */
-.pipe-out-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.pipe-out-card { background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; transition: border-color 0.2s var(--ease); }
+.pipe-out-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pipe-out-card { background: linear-gradient(145deg, var(--card2) 0%, var(--card) 100%); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; transition: border-color 0.2s var(--ease); box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset; }
 .pipe-out-card:hover { border-color: var(--border2); }
 .poc-label { font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
 .poc-row { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; font-size: 11px; color: var(--mid); }
@@ -840,6 +852,58 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   * { scroll-behavior: auto !important; }
+}
+
+/* ── HERO BADGE ── */
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(91,140,255,0.10); border: 1px solid rgba(91,140,255,0.22);
+  border-radius: 999px; padding: 6px 16px;
+  font-size: 11.5px; font-weight: 500; color: rgba(255,255,255,0.62);
+  letter-spacing: 0.07em; text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+.hero-badge::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 10px var(--accent); flex-shrink: 0;
+}
+
+/* ── SECTION AMBIENT GLOWS ── */
+/* Why Miqyas gets a blue halo above it */
+#why {
+  background:
+    radial-gradient(ellipse 80% 45% at 50% -5%, rgba(91,140,255,0.08), transparent 60%),
+    var(--bg2);
+}
+/* 3D scene section gets a subtle upward glow from below canvas */
+.scene-section {
+  background:
+    radial-gradient(ellipse 70% 35% at 50% 110%, rgba(91,140,255,0.07), transparent 55%),
+    var(--bg);
+}
+
+/* ── FEATURE NUMBERS ── */
+.features { counter-reset: feat; }
+.feature { counter-increment: feat; }
+.feat-num {
+  font-family: 'Fraunces', serif; font-size: 13px; font-weight: 400; line-height: 1;
+  color: var(--gold); opacity: 0.65; margin-top: 3px; flex-shrink: 0; min-width: 22px;
+}
+/* feat-left now: number + icon + title */
+.feat-left { display: flex; align-items: flex-start; gap: 14px; }
+.feat-ic-title { display: flex; align-items: center; gap: 14px; }
+
+/* ── SCENE SECTION padding reduction ── */
+.scene-section { padding: 40px 24px 48px; }
+
+/* ── CTA glow on primary button (also nav CTA) ── */
+.btn-demo { transition: opacity 0.15s, transform 0.1s, box-shadow 0.2s; }
+
+/* footer padding balance */
+footer { padding: 52px 24px 40px; }
+
+@media (max-width: 860px) {
+  .feat-num { display: none; }
 }
 </style>
 </head>
@@ -942,7 +1006,7 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
 <div class="hero-wrap">
 <div class="hero-overlay"></div>
 <div class="hero">
-  <div class="hero-label">AI construction analytics</div>
+  <div class="hero-label"><span class="hero-badge">AI construction analytics</span></div>
   <h1>See how much of your building<br><em>is actually built</em></h1>
   <p class="hero-sub">Feed it a 360° walkthrough, your IFC model, and your P6 schedule. Get element-level progress, deviation flags, and a forecast — grounded in your model, not an eyeball.</p>
   <div class="hero-cta-row">
@@ -961,9 +1025,7 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
 
 <!-- 3D BIM SCENE -->
 <div class="scene-section">
-<div class="scene-section-label">Live Demo</div>
-<div class="scene-section-title">See deviations at a glance</div>
-<div class="scene-section-sub">Interact with the model — click any floor to inspect its status</div>
+<div class="scene-section-title">Interactive model — click any floor to inspect</div>
 <div class="scene-wrap">
   <canvas id="bim-canvas"></canvas>
 
@@ -1167,29 +1229,41 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
     <div class="features">
       <div class="feature">
         <div class="feat-left">
-          <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="21" cy="21" r="8"/><circle cx="21" cy="21" r="14" stroke-opacity="0.3"/><line x1="21" y1="4" x2="21" y2="7"/><line x1="21" y1="35" x2="21" y2="38"/><line x1="4" y1="21" x2="7" y2="21"/><line x1="35" y1="21" x2="38" y2="21"/><circle cx="21" cy="21" r="2.5" fill="var(--accent)" stroke="none"/></svg></div>
-          <h3>AI Deviation Detection</h3>
+          <span class="feat-num">01</span>
+          <div class="feat-ic-title">
+            <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="21" cy="21" r="8"/><circle cx="21" cy="21" r="14" stroke-opacity="0.3"/><line x1="21" y1="4" x2="21" y2="7"/><line x1="21" y1="35" x2="21" y2="38"/><line x1="4" y1="21" x2="7" y2="21"/><line x1="35" y1="21" x2="38" y2="21"/><circle cx="21" cy="21" r="2.5" fill="var(--accent)" stroke="none"/></svg></div>
+            <h3>AI Deviation Detection</h3>
+          </div>
         </div>
         <p>Computer vision identifies elements across 13 construction categories. IoU scoring flags behind, ahead, and not-started elements automatically — no manual annotations needed.</p>
       </div>
       <div class="feature">
         <div class="feat-left">
-          <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="21" cy="9" r="3"/><circle cx="9" cy="30" r="3"/><circle cx="33" cy="30" r="3"/><line x1="21" y1="12" x2="21" y2="20"/><line x1="21" y1="20" x2="9" y2="27"/><line x1="21" y1="20" x2="33" y2="27"/><line x1="9" y1="20" x2="9" y2="27" stroke-dasharray="3 3" stroke-opacity="0.4"/></svg></div>
-          <h3>Critical Path Analysis</h3>
+          <span class="feat-num">02</span>
+          <div class="feat-ic-title">
+            <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="21" cy="9" r="3"/><circle cx="9" cy="30" r="3"/><circle cx="33" cy="30" r="3"/><line x1="21" y1="12" x2="21" y2="20"/><line x1="21" y1="20" x2="9" y2="27"/><line x1="21" y1="20" x2="33" y2="27"/><line x1="9" y1="20" x2="9" y2="27" stroke-dasharray="3 3" stroke-opacity="0.4"/></svg></div>
+            <h3>Critical Path Analysis</h3>
+          </div>
         </div>
         <p>Deviations cross-referenced with your P6 schedule. A slip on a float-rich element is noise. The same slip on the core wall is a crisis. We tell you which is which.</p>
       </div>
       <div class="feature">
         <div class="feat-left">
-          <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5l16 9v14L21 37 5 28V14z"/><path d="M21 5v32M5 14l16 9 16-9" stroke-opacity="0.4"/><circle cx="21" cy="23" r="2.5" fill="var(--accent)" stroke="none"/></svg></div>
-          <h3>Interactive 3D BIM Viewer</h3>
+          <span class="feat-num">03</span>
+          <div class="feat-ic-title">
+            <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5l16 9v14L21 37 5 28V14z"/><path d="M21 5v32M5 14l16 9 16-9" stroke-opacity="0.4"/><circle cx="21" cy="23" r="2.5" fill="var(--accent)" stroke="none"/></svg></div>
+            <h3>Interactive 3D BIM Viewer</h3>
+          </div>
         </div>
         <p>Real IFC geometry rendered in the browser — not bounding boxes. Click any element to see its IoU score, deviation status, and linked schedule activity.</p>
       </div>
       <div class="feature">
         <div class="feat-left">
-          <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="24" y="24" width="12" height="12" rx="2"/><path d="M18 12h6a6 6 0 016 6v6" stroke-opacity="0.6"/><circle cx="12" cy="12" r="2" fill="var(--accent)" stroke="none"/><circle cx="30" cy="30" r="2" fill="var(--accent)" stroke="none"/></svg></div>
-          <h3>Procore Integration</h3>
+          <span class="feat-num">04</span>
+          <div class="feat-ic-title">
+            <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="24" y="24" width="12" height="12" rx="2"/><path d="M18 12h6a6 6 0 016 6v6" stroke-opacity="0.6"/><circle cx="12" cy="12" r="2" fill="var(--accent)" stroke="none"/><circle cx="30" cy="30" r="2" fill="var(--accent)" stroke="none"/></svg></div>
+            <h3>Procore Integration</h3>
+          </div>
         </div>
         <p>Connect via OAuth2 in under 2 minutes. Configure field mapping once, then bulk-push deviations as RFIs or Issues in one click. Full audit trail on both sides.</p>
       </div>
@@ -1249,7 +1323,7 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
           <img src="assets/logo.jpeg" alt="Miqyas" class="logo-img" />
           <span class="logo-word">Miqyas</span>
         </a>
-        <p class="footer-tagline">AI-powered construction progress tracking.</p>
+        <p class="footer-tagline">Know what's built. Know what's behind.</p>
       </div>
       <div class="footer-cols">
         <div class="footer-col">
