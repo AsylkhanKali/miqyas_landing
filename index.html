@@ -12,14 +12,31 @@
 
 :root {
   --bg:      #000000;
-  --bg2:     #080808;
+  --bg2:     #070708;
   --border:  rgba(255,255,255,0.08);
   --border2: rgba(255,255,255,0.16);
   --text:    #ffffff;
-  --muted:   #555555;
-  --mid:     #888888;
-  --card:    #0d0d0d;
-  --card2:   #141414;
+  --muted:   #6a6a72;
+  --mid:     #9a9aa4;
+  --card:    #0c0c0e;
+  --card2:   #131316;
+  --card3:   #18181c;
+
+  /* one restrained signal accent (cool blue) — data, focus, alerts only */
+  --accent:      #5b8cff;
+  --accent-soft: rgba(91,140,255,0.14);
+  --accent-line: rgba(91,140,255,0.32);
+
+  /* status (mirrors the 3D scene language) */
+  --st-behind: #ff6b5e;
+  --st-track:  #8a8a93;
+  --st-ahead:  #5bd0a0;
+
+  /* depth + motion */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-md: 0 16px 40px rgba(0,0,0,0.45);
+  --shadow-lg: 0 32px 80px rgba(0,0,0,0.6);
+  --ease:      cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 html { scroll-behavior: smooth; }
@@ -276,21 +293,6 @@ hr { border: none; border-top: 1px solid var(--border); }
 .feature h3   { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 8px; }
 .feature p    { font-size: 13px; color: var(--muted); line-height: 1.65; }
 
-/* Testimonials */
-.testimonials { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 56px; }
-.testimonial {
-  border: 1px solid var(--border); border-radius: 10px; padding: 28px; background: var(--card);
-  display: flex; flex-direction: column; gap: 20px; transition: border-color 0.15s;
-}
-.testimonial:hover { border-color: var(--border2); }
-.t-quote { font-family: 'Newsreader', serif; font-size: 16px; font-style: italic; color: #ddd; line-height: 1.6; flex: 1; }
-.t-divider { border: none; border-top: 1px solid var(--border); }
-.t-name { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 2px; }
-.t-role { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
-.t-stats { display: flex; gap: 20px; }
-.t-stat-val { font-family: 'Newsreader', serif; font-size: 22px; font-weight: 600; color: #fff; }
-.t-stat-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
-
 /* Pricing */
 .pricing-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
@@ -382,13 +384,15 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
 .footer-col { display: flex; flex-direction: column; gap: 10px; }
 .footer-col a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.15s; }
 .footer-col a:hover { color: #fff; }
+.footer-link-btn { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--muted); background: none; border: none; padding: 0; text-align: left; cursor: pointer; transition: color 0.15s; }
+.footer-link-btn:hover { color: #fff; }
 .footer-bottom { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
 
 /* Responsive */
 @media (max-width: 860px) {
   nav { padding: 0 20px; }
   .nav-links { display: none; }
-  .problem-cols, .stats-row, .steps, .features, .testimonials, .pricing-grid, .faq-list { grid-template-columns: 1fr; }
+  .problem-cols, .stats-row, .steps, .features, .pricing-grid, .faq-list { grid-template-columns: 1fr; }
   .problem-col, .stat-col, .feature { border-right: none; }
   .feature:nth-child(n) { border-right: none; border-bottom: 1px solid var(--border); }
   .feature:last-child { border-bottom: none; }
@@ -537,6 +541,157 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
   display: none;
 }
 .form-error.show { display: block; }
+
+/* ════════════════════════════════════════════════════════════
+   REDESIGN LAYER — depth, rhythm, motion, new sections
+   ════════════════════════════════════════════════════════════ */
+
+/* Scroll-reveal */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); will-change: opacity, transform; }
+.reveal.in { opacity: 1; transform: none; }
+.reveal.d1 { transition-delay: 0.06s; }
+.reveal.d2 { transition-delay: 0.12s; }
+.reveal.d3 { transition-delay: 0.18s; }
+
+/* Nav: glassier scrolled state + active link */
+nav { transition: background 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease); }
+nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 10px 30px rgba(0,0,0,0.5); }
+.nav-links a { position: relative; }
+.nav-links a.active { color: #fff; }
+.nav-links a.active::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -19px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+.nav-cta { box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 6px 18px rgba(91,140,255,0.12); }
+
+/* Ambient backdrop for hero + CTA (CSS only) */
+.hero { position: relative; }
+.hero::before {
+  content: ""; position: absolute; inset: -80px 0 auto; height: 520px; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(620px 300px at 50% -40px, rgba(91,140,255,0.10), transparent 70%),
+    radial-gradient(900px 380px at 50% 0, rgba(255,255,255,0.025), transparent 70%);
+}
+.hero h1 em { color: rgba(255,255,255,0.5); }
+
+/* Gradient hairline divider */
+.div-grad { border: none; height: 1px; background: linear-gradient(90deg, transparent, var(--border2), transparent); opacity: 0.7; }
+
+/* Unified card hover lift for existing grids */
+.problem-col, .feature, .pricing-card, .faq-item { transition: background 0.2s var(--ease), border-color 0.2s var(--ease), transform 0.2s var(--ease); }
+.feature:hover, .problem-col:hover { transform: translateY(-2px); }
+
+/* Section eyebrow accent tick */
+.section-label { display: inline-flex; align-items: center; gap: 9px; }
+.section-label::before { content: ""; width: 16px; height: 1px; background: var(--accent); opacity: 0.8; }
+.scene-section-label, .hero-label, .modal-eyebrow { } /* unchanged */
+
+/* Scene container: subtle accent ring */
+.scene-wrap { box-shadow: 0 0 0 1px rgba(91,140,255,0.06), 0 24px 64px rgba(0,0,0,0.6); }
+
+/* ── VALUE PROPS (under hero) ── */
+.vprops { max-width: 960px; margin: 8px auto 0; padding: 0 24px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.vprop {
+  border: 1px solid var(--border); border-radius: 12px; padding: 24px 22px;
+  background: linear-gradient(180deg, var(--card2), var(--card));
+  position: relative; overflow: hidden; transition: border-color 0.2s var(--ease), transform 0.2s var(--ease); }
+.vprop::before { content: ""; position: absolute; top: 0; left: 22px; right: 22px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-line), transparent); opacity: 0; transition: opacity 0.25s var(--ease); }
+.vprop:hover { border-color: var(--border2); transform: translateY(-3px); }
+.vprop:hover::before { opacity: 1; }
+.vprop-ic { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border2); background: var(--accent-soft); margin-bottom: 14px; }
+.vprop-ic svg { width: 17px; height: 17px; stroke: var(--accent); }
+.vprop h3 { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+.vprop p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* ── WHY / TRUST band ── */
+.why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 56px; }
+.why-card {
+  border: 1px solid var(--border); border-radius: 12px; padding: 30px 28px; background: var(--card);
+  display: flex; flex-direction: column; gap: 12px; transition: border-color 0.2s var(--ease), transform 0.2s var(--ease); }
+.why-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+.why-kicker { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.why-card h3 { font-family: 'Newsreader', serif; font-size: 21px; font-weight: 600; color: #fff; letter-spacing: -0.01em; line-height: 1.2; }
+.why-card p { font-size: 13.5px; color: var(--muted); line-height: 1.65; }
+/* determinism mini-proof */
+.det-chip { margin-top: 4px; display: inline-flex; align-items: center; gap: 8px; font-size: 11px; color: var(--st-ahead);
+  border: 1px solid rgba(91,208,160,0.25); background: rgba(91,208,160,0.06); border-radius: 6px; padding: 5px 9px; width: fit-content;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.det-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--st-ahead); box-shadow: 0 0 8px var(--st-ahead); }
+
+/* ── ANALYTICS depth ── */
+.analytics-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 16px; margin-top: 56px; }
+.ana-card { border: 1px solid var(--border); border-radius: 12px; background: var(--card); padding: 26px; transition: border-color 0.2s var(--ease); }
+.ana-card:hover { border-color: var(--border2); }
+.ana-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.ana-title { font-size: 14px; font-weight: 600; color: #fff; }
+.ana-tag { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); border-radius: 5px; padding: 3px 7px; }
+/* EVM metric chips */
+.evm-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+.evm-chip { border: 1px solid var(--border); border-radius: 9px; padding: 12px 12px; background: var(--card2); }
+.evm-k { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.evm-v { font-family: 'Newsreader', serif; font-size: 24px; font-weight: 600; color: #fff; line-height: 1; font-variant-numeric: tabular-nums; }
+.evm-v.good { color: var(--st-ahead); }
+.evm-v.warn { color: var(--st-behind); }
+.evm-foot { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.evm-formula { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; color: var(--mid);
+  background: #0a0a0c; border: 1px solid var(--border); border-radius: 7px; padding: 9px 12px; margin: 4px 0 12px; overflow-x: auto; white-space: nowrap; }
+.evm-formula b { color: var(--accent); font-weight: 600; }
+/* pace bars */
+.pace-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.pace-lbl { font-size: 11px; color: var(--muted); width: 86px; flex-shrink: 0; }
+.pace-track { flex: 1; height: 7px; border-radius: 4px; background: rgba(255,255,255,0.06); overflow: hidden; }
+.pace-fill { height: 100%; border-radius: 4px; }
+.pace-fill.plan { background: rgba(255,255,255,0.28); }
+.pace-fill.actual { background: var(--accent); box-shadow: 0 0 10px var(--accent-soft); }
+.pace-fill.req { background: var(--st-behind); }
+.pace-val { font-size: 11px; color: var(--mid); width: 44px; text-align: right; font-variant-numeric: tabular-nums; }
+/* Line of balance mini matrix */
+.lob { display: grid; grid-template-columns: 64px repeat(6, 1fr); gap: 4px; margin-top: 4px; }
+.lob-lbl { font-size: 10px; color: var(--muted); display: flex; align-items: center; }
+.lob-cell { aspect-ratio: 1 / 0.5; border-radius: 3px; background: rgba(255,255,255,0.05); }
+.lob-cell.s4 { background: var(--st-ahead); }
+.lob-cell.s3 { background: rgba(91,208,160,0.45); }
+.lob-cell.s2 { background: rgba(255,255,255,0.22); }
+.lob-cell.s1 { background: var(--st-behind); }
+.lob-cell.s0 { background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.12); }
+
+/* ── AI SITE DIARY ── */
+.diary-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 16px; margin-top: 56px; align-items: stretch; }
+.diary-copy { border: 1px solid var(--border); border-radius: 12px; padding: 30px 28px; background: var(--card); }
+.diary-copy h3 { font-family: 'Newsreader', serif; font-size: 22px; font-weight: 600; color: #fff; margin-bottom: 10px; letter-spacing: -0.01em; }
+.diary-copy p { font-size: 13.5px; color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
+.diary-sys { display: flex; flex-wrap: wrap; gap: 7px; }
+.sys-chip { font-size: 11px; color: var(--mid); border: 1px solid var(--border); border-radius: 999px; padding: 4px 11px; }
+.sys-chip b { color: var(--accent); font-weight: 600; }
+/* json card */
+.diary-json { border: 1px solid var(--border2); border-radius: 12px; background: #0a0a0c; overflow: hidden; box-shadow: var(--shadow-md); }
+.json-bar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; border-bottom: 1px solid var(--border); background: var(--card); }
+.json-dot { width: 9px; height: 9px; border-radius: 50%; background: #2a2a2e; }
+.json-name { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: var(--muted); margin-left: 4px; }
+.json-body { padding: 16px 18px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 1.75; color: #c9c9d2; overflow-x: auto; }
+.json-body .k { color: #8aa0d6; }
+.json-body .s { color: var(--st-ahead); }
+.json-body .n { color: #e0b56b; }
+.json-body .b { color: var(--st-behind); }
+.json-body .p { color: var(--muted); }
+
+/* Responsive for new sections */
+@media (max-width: 860px) {
+  .vprops, .why-grid, .analytics-grid, .diary-grid { grid-template-columns: 1fr; }
+  .evm-row { grid-template-columns: repeat(2, 1fr); }
+  .nav-links a.active::after { display: none; }
+}
+@media (max-width: 560px) {
+  .vprops { padding: 0 16px; }
+  .lob { grid-template-columns: 52px repeat(6, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  * { scroll-behavior: auto !important; }
+}
 </style>
 </head>
 <body>
@@ -618,16 +773,17 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
 </div>
 
 <!-- NAV -->
-<nav>
+<nav id="nav">
   <a href="#" class="logo">
     <img src="assets/logo.jpeg" alt="Miqyas" class="logo-img" />
     <span class="logo-word">MIQYAS</span>
   </a>
   <ul class="nav-links">
     <li><a href="#how">How it works</a></li>
+    <li><a href="#why">Why Miqyas</a></li>
+    <li><a href="#analytics">Analytics</a></li>
     <li><a href="#features">Features</a></li>
     <li><a href="#pricing">Pricing</a></li>
-    <li><a href="#faq">FAQ</a></li>
   </ul>
   <div class="nav-right">
     <button class="nav-cta" onclick="openModal()">Request Demo</button>
@@ -637,13 +793,32 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
 <!-- HERO -->
 <div class="hero">
   <div class="hero-label">AI Construction Analytics</div>
-  <h1>See your delays<br><em>before they happen</em></h1>
-  <p class="hero-sub">Upload a 360° site video, your IFC model, and your P6 schedule. Miqyas compares reality to plan and surfaces every deviation — automatically.</p>
+  <h1>See how much of your building<br><em>is actually built</em></h1>
+  <p class="hero-sub">Miqyas compares your 360° site video to your BIM model and schedule — and tells you, element by element, what's done, what's behind, and when you'll finish. Objective. Auditable. Grounded in your model.</p>
   <div class="hero-cta-row">
-    <button class="btn-demo" onclick="openModal()">Request Demo →</button>
+    <button class="btn-demo" onclick="openModal()">Request a demo →</button>
     <a href="#how" class="btn-sec">See how it works</a>
   </div>
   <p class="hero-note">No credit card · Setup in minutes · Works with IFC + Primavera P6</p>
+</div>
+
+<!-- VALUE PROPS -->
+<div class="vprops">
+  <div class="vprop reveal">
+    <div class="vprop-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg></div>
+    <h3>Objective progress</h3>
+    <p>Element-level % complete verified against your BIM — not eyeballed on a clipboard walk.</p>
+  </div>
+  <div class="vprop reveal d1">
+    <div class="vprop-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></div>
+    <h3>Catch slips early</h3>
+    <p>Pace analysis, Earned Value, and delay forecasts the moment a trade falls behind.</p>
+  </div>
+  <div class="vprop reveal d2">
+    <div class="vprop-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7z"/></svg></div>
+    <h3>Trust the number</h3>
+    <p>Transparent formulas and reproducible AI you can re-run and audit — same input, same answer.</p>
+  </div>
 </div>
 
 <!-- 3D BIM SCENE -->
@@ -706,7 +881,7 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
 </div><!-- /scene-section -->
 
 <!-- PROBLEM -->
-<hr />
+<hr class="div-grad" />
 <div class="section" style="background:var(--bg2)">
   <div class="section-full">
     <div class="section-narrow" style="margin-bottom:0">
@@ -748,7 +923,7 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
 </div>
 
 <!-- HOW IT WORKS -->
-<hr />
+<hr class="div-grad" />
 <div class="section" id="how">
   <div class="section-full">
     <div class="section-narrow" style="margin-bottom:0">
@@ -779,9 +954,94 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
   </div>
 </div>
 
+<!-- WHY MIQYAS -->
+<hr class="div-grad" />
+<div class="section" id="why">
+  <div class="section-full">
+    <div class="section-narrow" style="margin-bottom:0">
+      <div class="section-label">Why Miqyas</div>
+      <h2>A number you can <em>stand behind</em></h2>
+      <p class="section-body">Most tools show you pictures. Miqyas shows you a measurement — tied to your model, computed the same way every time, and written in language your team already speaks.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <div class="why-kicker">Auditable &amp; deterministic</div>
+        <h3>Re-run it. Get the same answer.</h3>
+        <p>The same site image always produces byte-identical output — guaranteed by a content-hash cache over a pinned local model with fixed-seed, greedy decoding. When a number drives a payment claim or a dispute, you can reproduce it on demand.</p>
+        <div class="det-chip"><span class="det-dot"></span>sha256(image) → identical result</div>
+      </div>
+      <div class="why-card reveal d1">
+        <div class="why-kicker">BIM-grounded</div>
+        <h3>Every % maps to an element.</h3>
+        <p>Not dated photos. Each progress figure traces to a specific model element, a specific schedule activity, and the exact frame it was observed in — so you can always see <em>where</em> a number came from.</p>
+      </div>
+      <div class="why-card reveal d2">
+        <div class="why-kicker">Standard language</div>
+        <h3>Reads like a normal report.</h3>
+        <p>Outputs speak in Earned Value and progress terms your PMs and owners already use. No new vocabulary, no black-box score to explain in the owner meeting.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ANALYTICS DEPTH -->
+<hr class="div-grad" />
+<div class="section" id="analytics" style="background:var(--bg2)">
+  <div class="section-full">
+    <div class="section-narrow" style="margin-bottom:0">
+      <div class="section-label">Analytics</div>
+      <h2>Earned Value, forecasts, and pace —<br><em>with the math in plain sight</em></h2>
+      <p class="section-body">Progress is just the start. Miqyas turns it into the metrics a project actually runs on — and lets you see and adjust every formula behind them.</p>
+    </div>
+    <div class="analytics-grid">
+      <!-- EVM -->
+      <div class="ana-card reveal">
+        <div class="ana-head">
+          <div class="ana-title">Earned Value Management</div>
+          <div class="ana-tag">Transparent · adjustable</div>
+        </div>
+        <div class="evm-row">
+          <div class="evm-chip"><div class="evm-k">SPI</div><div class="evm-v warn">0.91</div></div>
+          <div class="evm-chip"><div class="evm-k">CPI</div><div class="evm-v good">1.04</div></div>
+          <div class="evm-chip"><div class="evm-k">EAC</div><div class="evm-v">$8.4M</div></div>
+          <div class="evm-chip"><div class="evm-k">VAC</div><div class="evm-v warn">-$310K</div></div>
+        </div>
+        <div class="evm-formula">EAC = BAC / <b>CPI</b>  ·  SPI = <b>EV</b> / PV  ·  weights: structure 0.4, MEP 0.35…</div>
+        <p class="evm-foot">SPI, CPI, SV, CV, EAC, ETC, VAC and TCPI — each with visible formulas and editable trade weightings. See <em>why</em> it says 62% complete, then change the assumptions and watch it update.</p>
+      </div>
+      <!-- PACE / FORECAST -->
+      <div class="ana-card reveal d1">
+        <div class="ana-head">
+          <div class="ana-title">Delay forecast &amp; pace</div>
+          <div class="ana-tag">Weeks to complete</div>
+        </div>
+        <div class="pace-row"><div class="pace-lbl">Planned pace</div><div class="pace-track"><div class="pace-fill plan" style="width:72%"></div></div><div class="pace-val">72%</div></div>
+        <div class="pace-row"><div class="pace-lbl">Actual pace</div><div class="pace-track"><div class="pace-fill actual" style="width:58%"></div></div><div class="pace-val">58%</div></div>
+        <div class="pace-row"><div class="pace-lbl">Req. to hit date</div><div class="pace-track"><div class="pace-fill req" style="width:88%"></div></div><div class="pace-val">88%</div></div>
+        <p class="evm-foot">Weekly actual-vs-planned pace, projected weeks-to-complete, and the pace you'd need to still hit the deadline — plus a custom-pace simulator to test recovery scenarios.</p>
+      </div>
+    </div>
+    <!-- LINE OF BALANCE -->
+    <div class="ana-card reveal d2" style="margin-top:16px">
+      <div class="ana-head">
+        <div class="ana-title">Line of Balance</div>
+        <div class="ana-tag">By level · by segment</div>
+      </div>
+      <div class="lob">
+        <div class="lob-lbl">L5</div><div class="lob-cell s0"></div><div class="lob-cell s0"></div><div class="lob-cell s1"></div><div class="lob-cell s2"></div><div class="lob-cell s3"></div><div class="lob-cell s4"></div>
+        <div class="lob-lbl">L4</div><div class="lob-cell s0"></div><div class="lob-cell s1"></div><div class="lob-cell s2"></div><div class="lob-cell s3"></div><div class="lob-cell s4"></div><div class="lob-cell s4"></div>
+        <div class="lob-lbl">L3</div><div class="lob-cell s1"></div><div class="lob-cell s2"></div><div class="lob-cell s3"></div><div class="lob-cell s4"></div><div class="lob-cell s4"></div><div class="lob-cell s4"></div>
+        <div class="lob-lbl">L2</div><div class="lob-cell s2"></div><div class="lob-cell s3"></div><div class="lob-cell s4"></div><div class="lob-cell s4"></div><div class="lob-cell s4"></div><div class="lob-cell s4"></div>
+        <div class="lob-lbl">L1</div><div class="lob-cell s4"></div><div class="lob-cell s4"></div><div class="lob-cell s4"></div><div class="lob-cell s4"></div><div class="lob-cell s4"></div><div class="lob-cell s4"></div>
+      </div>
+      <p class="evm-foot" style="margin-top:14px">A level-by-segment matrix and forecast chart showing how each trade flows through the building over time — so a stall on one floor is obvious before it cascades.</p>
+    </div>
+  </div>
+</div>
+
 <!-- FEATURES -->
-<hr />
-<div class="section" id="features" style="background:var(--bg2)">
+<hr class="div-grad" />
+<div class="section" id="features">
   <div class="section-full">
     <div class="section-narrow" style="margin-bottom:0">
       <div class="section-label">Features</div>
@@ -812,51 +1072,53 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
   </div>
 </div>
 
-<!-- TESTIMONIALS -->
-<hr />
-<div class="section" id="proof">
+<!-- AI SITE DIARY -->
+<hr class="div-grad" />
+<div class="section" id="diary">
   <div class="section-full">
     <div class="section-narrow" style="margin-bottom:0">
-      <div class="section-label">Case Studies</div>
-      <h2>Trusted on <em>real projects</em></h2>
+      <div class="section-label">AI Site Diary</div>
+      <h2>Every panorama, read like a <em>seasoned superintendent</em></h2>
+      <p class="section-body">Beyond geometry, Miqyas reads each 360° capture into a structured site diary — the kind of notes a sharp super would write, but consistent, instant, and machine-readable.</p>
     </div>
-    <div class="testimonials">
-      <div class="testimonial">
-        <p class="t-quote">"We caught a 6-day structural steel slip on Level 4 before the concrete pour. That one catch paid for the platform for six months."</p>
-        <hr class="t-divider" />
-        <div class="t-name">Amir Hassan</div>
-        <div class="t-role">Site Manager · High-rise residential, Dubai</div>
-        <div class="t-stats">
-          <div><div class="t-stat-val">6d</div><div class="t-stat-lbl">Slip caught early</div></div>
-          <div><div class="t-stat-val">$340K</div><div class="t-stat-lbl">Estimated saving</div></div>
+    <div class="diary-grid">
+      <div class="diary-copy reveal">
+        <h3>One photo in. A full status read out.</h3>
+        <p>For each panorama, Miqyas reports the construction phase, overall completion, and the state of every major system — then assesses it against your schedule and flags crews and scaffolding on site.</p>
+        <div class="diary-sys">
+          <span class="sys-chip">Ceiling <b>finishing</b></span>
+          <span class="sys-chip">Flooring <b>screed</b></span>
+          <span class="sys-chip">Walls <b>painted</b></span>
+          <span class="sys-chip">MEP <b>rough-in</b></span>
+          <span class="sys-chip">Glazing <b>installed</b></span>
+          <span class="sys-chip">Furnishings <b>not started</b></span>
         </div>
       </div>
-      <div class="testimonial">
-        <p class="t-quote">"Our investors used to wait for monthly PDFs. Now they have a live 3D viewer. The conversations are completely different."</p>
-        <hr class="t-divider" />
-        <div class="t-name">Leila Petrova</div>
-        <div class="t-role">Project Director · Mixed-use development</div>
-        <div class="t-stats">
-          <div><div class="t-stat-val">12h</div><div class="t-stat-lbl">Report prep cut</div></div>
-          <div><div class="t-stat-val">174</div><div class="t-stat-lbl">Elements tracked</div></div>
+      <div class="diary-json reveal d1">
+        <div class="json-bar">
+          <span class="json-dot"></span><span class="json-dot"></span><span class="json-dot"></span>
+          <span class="json-name">level-04 · pano_018.json</span>
         </div>
-      </div>
-      <div class="testimonial">
-        <p class="t-quote">"We pushed 23 RFIs to Procore directly from the deviation report. No copy-paste, no missed items. The audit trail alone is worth it."</p>
-        <hr class="t-divider" />
-        <div class="t-name">Tom Reyes</div>
-        <div class="t-role">QA Lead · Infrastructure contractor</div>
-        <div class="t-stats">
-          <div><div class="t-stat-val">23</div><div class="t-stat-lbl">RFIs auto-created</div></div>
-          <div><div class="t-stat-val">0</div><div class="t-stat-lbl">Manual entries</div></div>
-        </div>
+        <div class="json-body"><span class="p">{</span>
+  <span class="k">"phase"</span>: <span class="s">"interior_fit_out"</span>,
+  <span class="k">"completion"</span>: <span class="n">0.62</span>,
+  <span class="k">"systems"</span>: <span class="p">{</span>
+    <span class="k">"walls"</span>:    <span class="s">"painted"</span>,
+    <span class="k">"flooring"</span>: <span class="s">"screed_poured"</span>,
+    <span class="k">"mep"</span>:      <span class="s">"rough_in"</span>,
+    <span class="k">"glazing"</span>:  <span class="s">"installed"</span>
+  <span class="p">}</span>,
+  <span class="k">"crew_present"</span>: <span class="n">true</span>,
+  <span class="k">"scaffolding"</span>: <span class="n">true</span>,
+  <span class="k">"schedule"</span>: <span class="b">"behind_2w"</span>
+<span class="p">}</span></div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- PRICING -->
-<hr />
+<hr class="div-grad" />
 <div class="section" id="pricing" style="background:var(--bg2);text-align:center">
   <div class="section-full">
     <div class="section-label">Pricing</div>
@@ -914,7 +1176,7 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
 </div>
 
 <!-- FAQ -->
-<hr />
+<hr class="div-grad" />
 <div class="section" id="faq">
   <div class="section-full">
     <div class="section-narrow" style="margin-bottom:0">
@@ -932,7 +1194,7 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
       </div>
       <div class="faq-item">
         <div class="faq-q">How long does analysis take after upload?</div>
-        <div class="faq-a">Typically 15–40 minutes. Frame extraction, COLMAP, segmentation, and comparison run in parallel via GPU workers. You get notified when done.</div>
+        <div class="faq-a">Frame extraction, camera alignment, segmentation, and comparison run as a pipeline — proven end-to-end locally today and rolling out to cloud GPU workers. In a pilot we'll set the right turnaround for your capture cadence and notify you when each run is ready.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">How does the Procore integration work?</div>
@@ -944,7 +1206,7 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
       </div>
       <div class="faq-item">
         <div class="faq-q">How accurate is deviation detection?</div>
-        <div class="faq-a">With good 360° coverage, IoU above 0.7 is typical for well-modeled elements. Every result includes a per-element confidence score.</div>
+        <div class="faq-a">Our framing is honest: BIM-grounded, deterministic, and human-verifiable. Every element carries a per-element confidence score and traces back to the exact frame it was observed in, so a PM can confirm any result. We publish measured accuracy per project against ground truth rather than a single headline number.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">Can stakeholders view without an account?</div>
@@ -952,7 +1214,7 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
       </div>
       <div class="faq-item">
         <div class="faq-q">What's the typical ROI?</div>
-        <div class="faq-a">One prevented critical-path delay typically covers months of cost. Case study projects report $200K–$500K in avoided recovery costs per catch.</div>
+        <div class="faq-a">The value is in catching critical-path slips while there's still time to recover — fixing a deviation late costs several times more than catching it early. We'd rather measure the impact with you in a pilot than quote a number we can't back up.</div>
       </div>
     </div>
   </div>
@@ -984,26 +1246,26 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
         <div class="footer-col">
           <div class="footer-col-title">Product</div>
           <a href="#how">How it works</a>
+          <a href="#why">Why Miqyas</a>
+          <a href="#analytics">Analytics</a>
           <a href="#features">Features</a>
           <a href="#pricing">Pricing</a>
-          <a href="https://miqyas-omega.vercel.app/" target="_blank">Live Demo</a>
         </div>
         <div class="footer-col">
-          <div class="footer-col-title">Use Cases</div>
-          <a href="#">Site Supervisors</a>
-          <a href="#">Project Managers</a>
-          <a href="#">Investors</a>
+          <div class="footer-col-title">Explore</div>
+          <a href="#diary">AI Site Diary</a>
+          <a href="#faq">FAQ</a>
+          <a href="https://miqyas-omega.vercel.app/" target="_blank">Live Demo</a>
         </div>
         <div class="footer-col">
           <div class="footer-col-title">Company</div>
           <a href="mailto:hello@miqyas.io">Contact</a>
-          <a href="#faq">FAQ</a>
-          <a href="#">Privacy</a>
+          <button class="footer-link-btn" onclick="openModal()">Request a demo</button>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2025 Miqyas. All rights reserved.</span>
+      <span>© 2026 Miqyas. All rights reserved.</span>
       <span>Built for the construction industry.</span>
     </div>
   </div>
@@ -1086,6 +1348,48 @@ formEl.addEventListener('submit', async e => {
     submitLabel.textContent = 'Request Demo →';
   }
 });
+</script>
+
+<!-- UI: scroll-reveal + nav state -->
+<script>
+(function () {
+  var reveals = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
+    // Safety: reveal everything after load in case anything is missed
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        document.querySelectorAll('.reveal:not(.in)').forEach(function (el) {
+          var r = el.getBoundingClientRect();
+          if (r.top < window.innerHeight) el.classList.add('in');
+        });
+      }, 600);
+    });
+  }
+
+  // Nav: scrolled state + active link
+  var nav = document.getElementById('nav');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.nav-links a'));
+  var sections = links
+    .map(function (a) { var id = a.getAttribute('href'); return id && id.charAt(0) === '#' && id.length > 1 ? document.querySelector(id) : null; })
+    .filter(Boolean);
+
+  function onScroll() {
+    if (nav) nav.classList.toggle('scrolled', window.scrollY > 8);
+    var pos = window.scrollY + 120, current = null;
+    sections.forEach(function (sec) { if (sec.offsetTop <= pos) current = sec.id; });
+    links.forEach(function (a) { a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
 </script>
 
 <!-- THREE.JS -->
