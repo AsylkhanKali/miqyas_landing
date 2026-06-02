@@ -156,7 +156,7 @@ nav {
   border-radius: 18px;
   border: 1px solid var(--border2);
   overflow: hidden;
-  background: #000;
+  background: #f8f9ff;
   box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 24px 64px rgba(0,0,0,0.6);
 }
 #bim-canvas { display: block; width: 100%; height: 100%; }
@@ -1474,8 +1474,8 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x040a18);
-scene.fog = new THREE.FogExp2(0x040a18, 0.009);
+scene.background = new THREE.Color(0xffffff);
+scene.fog = new THREE.FogExp2(0xf0f4ff, 0.008);
 
 const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 400);
 camera.position.set(26, 22, 34);
@@ -1529,13 +1529,13 @@ scene.add(rimLight);
 
 /* ── GROUND ── */
 const groundGeo = new THREE.PlaneGeometry(120, 120);
-const groundMat = new THREE.MeshStandardMaterial({ color: 0x040a18, roughness: 1 });
+const groundMat = new THREE.MeshStandardMaterial({ color: 0xf0f4ff, roughness: 1 });
 const ground = new THREE.Mesh(groundGeo, groundMat);
 ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
 scene.add(ground);
 
-const grid = new THREE.GridHelper(80, 40, 0x0d1a35, 0x0a1428);
+const grid = new THREE.GridHelper(80, 40, 0xd0d8ee, 0xe4e9f5);
 grid.position.y = 0.01;
 scene.add(grid);
 
