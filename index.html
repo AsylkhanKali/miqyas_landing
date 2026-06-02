@@ -60,34 +60,34 @@ body {
 /* ── NAV ── */
 nav {
   position: sticky; top: 0; z-index: 200;
-  background: rgba(0,0,0,0.92);
-  backdrop-filter: blur(16px);
+  background: rgba(3,6,15,0.85);
+  backdrop-filter: blur(20px) saturate(160%);
   border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 40px; height: 56px;
+  padding: 0 52px; height: 68px;
 }
 /* ── LOGO ── */
-.logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
-.logo-img { height: 32px; width: 32px; border-radius: 7px; display: block; }
+.logo { display: inline-flex; align-items: center; gap: 14px; text-decoration: none; flex-shrink: 0; }
+.logo-img { height: 28px; width: 28px; border-radius: 6px; display: block; }
 .logo-word {
-  font-family: 'Syne', sans-serif;
-  font-size: 13px; font-weight: 800;
-  letter-spacing: 0.16em; color: #fff; line-height: 1;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 600;
+  letter-spacing: -0.01em; color: #fff; line-height: 1;
 }
 .footer-logo .logo-word { color: #fff; }
-.nav-links { display: flex; gap: 32px; list-style: none; }
-.nav-links a { font-family: 'Syne', sans-serif; color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; transition: color 0.15s; }
+.nav-links { display: flex; gap: 40px; list-style: none; }
+.nav-links a { font-family: 'DM Sans', sans-serif; color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 400; letter-spacing: 0; transition: color 0.15s; }
 .nav-links a:hover { color: var(--text); }
 .nav-right { display: flex; align-items: center; gap: 12px; }
 .nav-signin { color: var(--muted); text-decoration: none; font-size: 14px; transition: color 0.15s; }
 .nav-signin:hover { color: var(--text); }
 .nav-cta {
   background: #fff; color: #000;
-  padding: 8px 18px; border-radius: 6px;
-  font-family: 'Syne', sans-serif;
-  font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-decoration: none; transition: opacity 0.15s;
+  padding: 10px 22px; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 600; letter-spacing: 0; text-decoration: none; transition: opacity 0.15s, transform 0.1s;
 }
-.nav-cta:hover { opacity: 0.85; }
+.nav-cta:hover { opacity: 0.88; transform: translateY(-1px); }
 
 /* ── HERO ── */
 .hero {
@@ -157,7 +157,7 @@ nav {
   border-radius: 18px;
   border: 1px solid var(--border2);
   overflow: hidden;
-  background: #f8f9ff;
+  background: #040a18;
   box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 24px 64px rgba(0,0,0,0.6);
 }
 #bim-canvas { display: block; width: 100%; height: 100%; }
@@ -287,21 +287,19 @@ hr { border: none; border-top: 1px solid var(--border); }
   border: 1px solid var(--border); padding: 3px 8px; border-radius: 4px;
 }
 
-/* Features */
-.features {
-  display: grid; grid-template-columns: repeat(2, 1fr);
-  border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 56px;
-}
+/* Features — clean list, no card grid */
+.features { display: flex; flex-direction: column; margin-top: 56px; }
 .feature {
-  padding: 40px 36px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
-  transition: background 0.15s;
+  display: grid; grid-template-columns: 260px 1fr; gap: 40px; align-items: flex-start;
+  padding: 32px 0; border-top: 1px solid var(--border);
+  transition: none;
 }
-.feature:hover { background: var(--card); }
-.feature:nth-child(2n) { border-right: none; }
-.feature:nth-child(3), .feature:nth-child(4) { border-bottom: none; }
-.feature-icon { font-size: 22px; margin-bottom: 16px; }
-.feature h3   { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 8px; }
-.feature p    { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.feature:last-child { border-bottom: 1px solid var(--border); }
+.feat-left { display: flex; align-items: center; gap: 14px; }
+.feature-icon { width: 36px; height: 36px; flex-shrink: 0; margin-bottom: 0; }
+.feature-icon svg { width: 100%; height: 100%; }
+.feature h3 { font-size: 16px; font-weight: 600; color: #fff; line-height: 1.3; }
+.feature p  { font-size: 14px; color: var(--muted); line-height: 1.7; padding-top: 1px; }
 
 /* Hero stats strip */
 .hero-stats-strip {
@@ -375,12 +373,12 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
 @media (max-width: 860px) {
   nav { padding: 0 20px; }
   .nav-links { display: none; }
-  .problem-cols, .stats-row, .steps, .features, .faq-list { grid-template-columns: 1fr; }
+  .problem-cols, .stats-row, .steps, .faq-list { grid-template-columns: 1fr; }
   .hstat-div { display: none; }
   .hstat { padding: 0 20px; }
-  .problem-col, .stat-col, .feature { border-right: none; }
-  .feature:nth-child(n) { border-right: none; border-bottom: 1px solid var(--border); }
-  .feature:last-child { border-bottom: none; }
+  .problem-col, .stat-col { border-right: none; }
+  .feature { grid-template-columns: 1fr; gap: 10px; }
+  .feat-left { gap: 12px; }
   .faq-item:nth-child(n) { border-right: none; border-bottom: 1px solid var(--border); }
   .faq-item:last-child { border-bottom: none; }
   .footer-top { flex-direction: column; gap: 40px; }
@@ -540,14 +538,14 @@ footer { border-top: 1px solid var(--border); padding: 48px 24px 32px; }
 
 /* Nav: glassier scrolled state + active link */
 nav { transition: background 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease); }
-nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 10px 30px rgba(0,0,0,0.5); }
+nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,255,0.06), 0 8px 24px rgba(0,0,0,0.45); border-bottom-color: rgba(255,255,255,0.07); }
 .nav-links a { position: relative; }
 .nav-links a.active { color: #fff; }
 .nav-links a.active::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: -19px; height: 1px;
   background: linear-gradient(90deg, transparent, var(--accent), transparent);
 }
-.nav-cta { box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 6px 18px rgba(91,140,255,0.12); }
+.nav-cta { box-shadow: none; }
 
 /* ── HERO PHOTO WRAP ── */
 .hero-wrap {
@@ -604,10 +602,9 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
 .problem-col, .feature, .pricing-card, .faq-item { transition: background 0.2s var(--ease), border-color 0.2s var(--ease), transform 0.2s var(--ease); }
 .feature:hover, .problem-col:hover { transform: translateY(-2px); }
 
-/* Section eyebrow accent tick */
-.section-label { display: inline-flex; align-items: center; gap: 9px; }
-.section-label::before { content: ""; width: 16px; height: 1px; background: var(--accent); opacity: 0.8; }
-.scene-section-label, .hero-label, .modal-eyebrow { } /* unchanged */
+/* Section label — clean, no tick */
+.section-label { display: block; }
+.scene-section-label, .hero-label, .modal-eyebrow { }
 
 /* Scene container: subtle accent ring */
 .scene-wrap { box-shadow: 0 0 0 1px rgba(91,140,255,0.06), 0 24px 64px rgba(0,0,0,0.6); }
@@ -681,25 +678,6 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
 .lob-cell.s1 { background: var(--st-behind); }
 .lob-cell.s0 { background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.12); }
 
-/* ── AI SITE DIARY ── */
-.diary-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 16px; margin-top: 56px; align-items: stretch; }
-.diary-copy { border: 1px solid var(--border); border-radius: 12px; padding: 30px 28px; background: var(--card); }
-.diary-copy h3 { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; color: #fff; margin-bottom: 10px; letter-spacing: -0.02em; }
-.diary-copy p { font-size: 13.5px; color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
-.diary-sys { display: flex; flex-wrap: wrap; gap: 7px; }
-.sys-chip { font-size: 11px; color: var(--mid); border: 1px solid var(--border); border-radius: 999px; padding: 4px 11px; }
-.sys-chip b { color: var(--accent); font-weight: 600; }
-/* json card */
-.diary-json { border: 1px solid var(--border2); border-radius: 12px; background: #0a0a0c; overflow: hidden; box-shadow: var(--shadow-md); }
-.json-bar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; border-bottom: 1px solid var(--border); background: var(--card); }
-.json-dot { width: 9px; height: 9px; border-radius: 50%; background: #2a2a2e; }
-.json-name { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: var(--muted); margin-left: 4px; }
-.json-body { padding: 16px 18px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 1.75; color: #c9c9d2; overflow-x: auto; }
-.json-body .k { color: #8aa0d6; }
-.json-body .s { color: var(--st-ahead); }
-.json-body .n { color: #e0b56b; }
-.json-body .b { color: var(--st-behind); }
-.json-body .p { color: var(--muted); }
 
 /* ── HERO GRID BACKDROP ── */
 .hero::after {
@@ -776,7 +754,7 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
 .pfc-icon { width: 36px; height: 36px; flex-shrink: 0; border-radius: 8px; background: var(--card3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
 .pfc-icon svg { width: 18px; height: 18px; }
 .pfc-info { flex: 1; min-width: 0; }
-.pfc-name { font-family: ui-monospace, monospace; font-size: 12.5px; color: #fff; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pfc-name { font-family: 'DM Sans', sans-serif; font-size: 14px; color: #fff; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pfc-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
 .pfc-badge { font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; flex-shrink: 0; }
 .pfc-badge.in { color: var(--accent); border-color: var(--accent-line); }
@@ -843,17 +821,10 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
 .faq-acc-item.open .faq-acc-body { max-height: 300px; }
 .faq-acc-answer { padding: 0 24px 20px; font-size: 14px; color: var(--muted); line-height: 1.7; }
 
-/* ── DIARY JSON glow ── */
-.diary-json { position: relative; }
-.diary-json::before {
-  content: ""; position: absolute; inset: -20px; z-index: -1; pointer-events: none;
-  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(91,140,255,0.08), transparent 70%);
-  border-radius: 20px;
-}
 
 /* Responsive for new sections */
 @media (max-width: 860px) {
-  .vprops, .why-grid, .analytics-grid, .diary-grid { grid-template-columns: 1fr; }
+  .vprops, .why-grid, .analytics-grid { grid-template-columns: 1fr; }
   .evm-row { grid-template-columns: repeat(2, 1fr); }
   .nav-links a.active::after { display: none; }
   .pipe-step { grid-template-columns: 1fr; gap: 32px; }
@@ -954,7 +925,7 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
 <nav id="nav">
   <a href="#" class="logo">
     <img src="assets/logo.jpeg" alt="Miqyas" class="logo-img" />
-    <span class="logo-word">MIQYAS</span>
+    <span class="logo-word">Miqyas</span>
   </a>
   <ul class="nav-links">
     <li><a href="#how">How it works</a></li>
@@ -1069,17 +1040,17 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
           <div class="pipe-file-stack">
             <div class="pipe-file-card">
               <div class="pfc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/></svg></div>
-              <div class="pfc-info"><div class="pfc-name">site_walk_2025-06.mp4</div><div class="pfc-meta">360° Site Video · any camera</div></div>
+              <div class="pfc-info"><div class="pfc-name">Video footage</div><div class="pfc-meta">360° walkthrough, any camera</div></div>
               <div class="pfc-badge in">INPUT</div>
             </div>
             <div class="pipe-file-card">
               <div class="pfc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-              <div class="pfc-info"><div class="pfc-name">building_model.ifc</div><div class="pfc-meta">174 elements · IFC 4 · Revit export</div></div>
+              <div class="pfc-info"><div class="pfc-name">BIM / IFC model</div><div class="pfc-meta">Your existing Revit or ArchiCAD model</div></div>
               <div class="pfc-badge in">INPUT</div>
             </div>
             <div class="pipe-file-card">
               <div class="pfc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-              <div class="pfc-info"><div class="pfc-name">schedule_v7.xer</div><div class="pfc-meta">312 activities · Primavera P6</div></div>
+              <div class="pfc-info"><div class="pfc-name">P6 Schedule</div><div class="pfc-meta">XER or XML, any version</div></div>
               <div class="pfc-badge in">INPUT</div>
             </div>
           </div>
@@ -1191,73 +1162,36 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
   <div class="section-full">
     <div class="section-narrow" style="margin-bottom:0">
       <div class="section-label">Features</div>
-      <h2>Everything a PM needs.<br><em>Nothing they don't.</em></h2>
+      <h2>Built for the way<br><em>projects actually run.</em></h2>
     </div>
     <div class="features">
       <div class="feature">
-        <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="21" cy="21" r="8"/><circle cx="21" cy="21" r="14" stroke-opacity="0.3"/><line x1="21" y1="4" x2="21" y2="7"/><line x1="21" y1="35" x2="21" y2="38"/><line x1="4" y1="21" x2="7" y2="21"/><line x1="35" y1="21" x2="38" y2="21"/><circle cx="21" cy="21" r="2.5" fill="var(--accent)" stroke="none"/></svg></div>
-        <h3>AI Deviation Detection</h3>
-        <p>Computer vision identifies elements across 13 construction categories. IoU scoring flags behind, ahead, and not-started elements automatically — no manual annotations.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="21" cy="9" r="3"/><circle cx="9" cy="30" r="3"/><circle cx="33" cy="30" r="3"/><line x1="21" y1="12" x2="21" y2="20"/><line x1="21" y1="20" x2="9" y2="27"/><line x1="21" y1="20" x2="33" y2="27"/><line x1="9" y1="20" x2="9" y2="27" stroke-dasharray="3 3" stroke-opacity="0.4"/></svg></div>
-        <h3>Critical Path Analysis</h3>
-        <p>Deviations are cross-referenced with your P6 schedule. A delay on a float-rich beam is noise. The same delay on the core wall is a crisis. We tell you which is which.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5l16 9v14L21 37 5 28V14z"/><path d="M21 5v32M5 14l16 9 16-9" stroke-opacity="0.4"/><circle cx="21" cy="23" r="2.5" fill="var(--accent)" stroke="none"/></svg></div>
-        <h3>Interactive 3D BIM Viewer</h3>
-        <p>Real IFC geometry rendered in the browser — not bounding boxes. Click any element to inspect its IoU score, deviation status, and linked schedule activity.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="24" y="24" width="12" height="12" rx="2"/><path d="M18 12h6a6 6 0 016 6v6" stroke-opacity="0.6"/><circle cx="12" cy="12" r="2" fill="var(--accent)" stroke="none"/><circle cx="30" cy="30" r="2" fill="var(--accent)" stroke="none"/></svg></div>
-        <h3>Procore Integration</h3>
-        <p>OAuth2 connect, configure field mapping once, then bulk-push deviations as RFIs or Issues in one click. Full audit trail on both sides.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- AI SITE DIARY -->
-<hr class="div-grad" />
-<div class="section" id="diary">
-  <div class="section-full">
-    <div class="section-narrow" style="margin-bottom:0">
-      <div class="section-label">AI Site Diary</div>
-      <h2>Every panorama, read like a <em>seasoned superintendent</em></h2>
-      <p class="section-body">Beyond geometry, Miqyas reads each 360° capture into a structured site diary — the kind of notes a sharp super would write, but consistent, instant, and machine-readable.</p>
-    </div>
-    <div class="diary-grid">
-      <div class="diary-copy reveal">
-        <h3>One photo in. A full status read out.</h3>
-        <p>For each panorama, Miqyas reports the construction phase, overall completion, and the state of every major system — then assesses it against your schedule and flags crews and scaffolding on site.</p>
-        <div class="diary-sys">
-          <span class="sys-chip">Ceiling <b>finishing</b></span>
-          <span class="sys-chip">Flooring <b>screed</b></span>
-          <span class="sys-chip">Walls <b>painted</b></span>
-          <span class="sys-chip">MEP <b>rough-in</b></span>
-          <span class="sys-chip">Glazing <b>installed</b></span>
-          <span class="sys-chip">Furnishings <b>not started</b></span>
+        <div class="feat-left">
+          <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="21" cy="21" r="8"/><circle cx="21" cy="21" r="14" stroke-opacity="0.3"/><line x1="21" y1="4" x2="21" y2="7"/><line x1="21" y1="35" x2="21" y2="38"/><line x1="4" y1="21" x2="7" y2="21"/><line x1="35" y1="21" x2="38" y2="21"/><circle cx="21" cy="21" r="2.5" fill="var(--accent)" stroke="none"/></svg></div>
+          <h3>AI Deviation Detection</h3>
         </div>
+        <p>Computer vision identifies elements across 13 construction categories. IoU scoring flags behind, ahead, and not-started elements automatically — no manual annotations needed.</p>
       </div>
-      <div class="diary-json reveal d1">
-        <div class="json-bar">
-          <span class="json-dot"></span><span class="json-dot"></span><span class="json-dot"></span>
-          <span class="json-name">level-04 · pano_018.json</span>
+      <div class="feature">
+        <div class="feat-left">
+          <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="21" cy="9" r="3"/><circle cx="9" cy="30" r="3"/><circle cx="33" cy="30" r="3"/><line x1="21" y1="12" x2="21" y2="20"/><line x1="21" y1="20" x2="9" y2="27"/><line x1="21" y1="20" x2="33" y2="27"/><line x1="9" y1="20" x2="9" y2="27" stroke-dasharray="3 3" stroke-opacity="0.4"/></svg></div>
+          <h3>Critical Path Analysis</h3>
         </div>
-        <div class="json-body"><span class="p">{</span>
-  <span class="k">"phase"</span>: <span class="s">"interior_fit_out"</span>,
-  <span class="k">"completion"</span>: <span class="n">0.62</span>,
-  <span class="k">"systems"</span>: <span class="p">{</span>
-    <span class="k">"walls"</span>:    <span class="s">"painted"</span>,
-    <span class="k">"flooring"</span>: <span class="s">"screed_poured"</span>,
-    <span class="k">"mep"</span>:      <span class="s">"rough_in"</span>,
-    <span class="k">"glazing"</span>:  <span class="s">"installed"</span>
-  <span class="p">}</span>,
-  <span class="k">"crew_present"</span>: <span class="n">true</span>,
-  <span class="k">"scaffolding"</span>: <span class="n">true</span>,
-  <span class="k">"schedule"</span>: <span class="b">"behind_2w"</span>
-<span class="p">}</span></div>
+        <p>Deviations cross-referenced with your P6 schedule. A slip on a float-rich element is noise. The same slip on the core wall is a crisis. We tell you which is which.</p>
+      </div>
+      <div class="feature">
+        <div class="feat-left">
+          <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5l16 9v14L21 37 5 28V14z"/><path d="M21 5v32M5 14l16 9 16-9" stroke-opacity="0.4"/><circle cx="21" cy="23" r="2.5" fill="var(--accent)" stroke="none"/></svg></div>
+          <h3>Interactive 3D BIM Viewer</h3>
+        </div>
+        <p>Real IFC geometry rendered in the browser — not bounding boxes. Click any element to see its IoU score, deviation status, and linked schedule activity.</p>
+      </div>
+      <div class="feature">
+        <div class="feat-left">
+          <div class="feature-icon"><svg viewBox="0 0 42 42" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="24" y="24" width="12" height="12" rx="2"/><path d="M18 12h6a6 6 0 016 6v6" stroke-opacity="0.6"/><circle cx="12" cy="12" r="2" fill="var(--accent)" stroke="none"/><circle cx="30" cy="30" r="2" fill="var(--accent)" stroke="none"/></svg></div>
+          <h3>Procore Integration</h3>
+        </div>
+        <p>Connect via OAuth2 in under 2 minutes. Configure field mapping once, then bulk-push deviations as RFIs or Issues in one click. Full audit trail on both sides.</p>
       </div>
     </div>
   </div>
@@ -1313,7 +1247,7 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
       <div>
         <a href="#" class="logo footer-logo">
           <img src="assets/logo.jpeg" alt="Miqyas" class="logo-img" />
-          <span class="logo-word">MIQYAS</span>
+          <span class="logo-word">Miqyas</span>
         </a>
         <p class="footer-tagline">AI-powered construction progress tracking.</p>
       </div>
@@ -1323,7 +1257,6 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
           <a href="#how">How it works</a>
           <a href="#why">Why Miqyas</a>
           <a href="#features">Features</a>
-          <a href="#diary">AI Site Diary</a>
         </div>
         <div class="footer-col">
           <div class="footer-col-title">Support</div>
@@ -1516,8 +1449,8 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xffffff);
-scene.fog = new THREE.FogExp2(0xf0f4ff, 0.008);
+scene.background = new THREE.Color(0x040a18);
+scene.fog = new THREE.FogExp2(0x040a18, 0.009);
 
 const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 400);
 camera.position.set(26, 22, 34);
@@ -1571,14 +1504,16 @@ scene.add(rimLight);
 
 /* ── GROUND ── */
 const groundGeo = new THREE.PlaneGeometry(120, 120);
-const groundMat = new THREE.MeshStandardMaterial({ color: 0xeef1f8, roughness: 0.95 });
+const groundMat = new THREE.MeshStandardMaterial({ color: 0x040a18, roughness: 1 });
 const ground = new THREE.Mesh(groundGeo, groundMat);
 ground.rotation.x = -Math.PI / 2;
-ground.position.y = -0.02; /* sink slightly to eliminate z-fighting */
+ground.position.y = -0.02;
 ground.receiveShadow = true;
 scene.add(ground);
 
-/* Grid removed — z-fights with ground on white bg; shadows provide depth instead */
+const grid = new THREE.GridHelper(80, 40, 0x0d1a35, 0x0a1428);
+grid.position.y = 0.01;
+scene.add(grid);
 
 /* ── BUILDING GEOMETRY ── */
 const W = 15, D = 10, FH = 4.0;
