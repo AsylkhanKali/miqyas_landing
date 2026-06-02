@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Miqyas — AI Construction Progress Tracking</title>
 <meta name="description" content="Upload a site video, BIM model, and schedule. Miqyas surfaces every deviation before it becomes a cost overrun." />
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1739900345763-391d9b62c938?w=1920&q=88&auto=format&fit=crop" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300;1,9..144,600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
@@ -548,15 +549,50 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
 }
 .nav-cta { box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 6px 18px rgba(91,140,255,0.12); }
 
-/* Ambient backdrop for hero + CTA (CSS only) */
-.hero { position: relative; }
-.hero::before {
-  content: ""; position: absolute; inset: -80px 0 auto; height: 520px; z-index: -1; pointer-events: none;
+/* ── HERO PHOTO WRAP ── */
+.hero-wrap {
+  position: relative;
+  overflow: hidden;
   background:
-    radial-gradient(620px 300px at 50% -40px, rgba(91,140,255,0.10), transparent 70%),
-    radial-gradient(900px 380px at 50% 0, rgba(255,255,255,0.025), transparent 70%);
+    url('https://images.unsplash.com/photo-1739900345763-391d9b62c938?w=1920&q=88&auto=format&fit=crop')
+    center 30% / cover no-repeat;
+  background-color: #03060f;
 }
-.hero h1 em { color: rgba(255,255,255,0.5); }
+.hero-overlay {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(3,6,15,0.62) 0%,
+    rgba(3,6,15,0.40) 30%,
+    rgba(3,6,15,0.65) 65%,
+    rgba(3,6,15,0.97) 100%
+  );
+}
+/* Override hero inside photo wrap */
+.hero-wrap .hero {
+  max-width: 900px;
+  min-height: 88vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 140px 24px 90px;
+  position: relative; z-index: 1;
+}
+.hero-wrap .hero::before { display: none; }
+.hero-wrap .hero-label { color: rgba(255,255,255,0.52); letter-spacing: 0.1em; }
+.hero-wrap .hero-sub { color: rgba(255,255,255,0.60); }
+.hero-wrap .hero-note { color: rgba(255,255,255,0.34); }
+.hero-wrap .hstat-l { color: rgba(255,255,255,0.42); }
+.hero-wrap .hstat-div { background: rgba(255,255,255,0.14); }
+.hero-wrap .hero-stats-strip {
+  border-top-color: rgba(255,255,255,0.10);
+  background: rgba(3,6,15,0.35);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 28px 32px;
+  max-width: 700px; width: 100%;
+}
+.hero-wrap .btn-sec { border-color: rgba(255,255,255,0.25); }
+.hero-wrap .btn-sec:hover { border-color: rgba(255,255,255,0.55); }
+.hero h1 em { color: rgba(255,255,255,0.48); }
 
 /* Gradient hairline divider */
 .div-grad { border: none; height: 1px; background: linear-gradient(90deg, transparent, var(--border2), transparent); opacity: 0.7; }
@@ -929,6 +965,8 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
 </nav>
 
 <!-- HERO -->
+<div class="hero-wrap">
+<div class="hero-overlay"></div>
 <div class="hero">
   <div class="hero-label">AI construction analytics</div>
   <h1>See how much of your building<br><em>is actually built</em></h1>
@@ -945,6 +983,7 @@ nav.scrolled { background: rgba(0,0,0,0.72); box-shadow: 0 1px 0 rgba(255,255,25
     <div class="hstat"><span class="hstat-n">3–5×</span><span class="hstat-l">the cost to fix a deviation caught late vs. early</span></div>
   </div>
 </div>
+</div><!-- /hero-wrap -->
 
 <!-- 3D BIM SCENE -->
 <div class="scene-section">
