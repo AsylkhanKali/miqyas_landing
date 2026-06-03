@@ -100,14 +100,15 @@ nav {
 }
 .hero h1 {
   font-family: 'Fraunces', serif;
-  font-size: clamp(44px, 6.5vw, 80px);
-  font-weight: 600; line-height: 1.02; letter-spacing: -0.03em;
-  color: #fff; margin-bottom: 22px;
+  font-size: clamp(54px, 8vw, 112px);
+  font-weight: 600; line-height: 0.98; letter-spacing: -0.035em;
+  color: #fff; margin-bottom: 28px;
+  font-variation-settings: 'opsz' 144;
 }
 .hero h1 em { font-style: italic; color: rgba(255,255,255,0.48); font-weight: 300; }
 .hero-sub {
   font-size: 18px; color: var(--muted); line-height: 1.65;
-  max-width: 520px; margin: 0 auto 40px; font-weight: 400;
+  max-width: 520px; margin: 0 auto 44px; font-weight: 500;
 }
 .hero-cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
 .btn-demo {
@@ -129,14 +130,7 @@ nav {
 .hero-note { font-size: 12px; color: var(--muted); }
 
 /* ── 3D SCENE ── */
-.scene-section { padding: 40px 24px 48px; }
-.scene-section-title {
-  text-align: center;
-  font-family: 'Fraunces', serif;
-  font-size: clamp(20px, 2.5vw, 28px);
-  font-weight: 400; color: rgba(255,255,255,0.55); letter-spacing: -0.01em;
-  margin-bottom: 20px; font-style: italic;
-}
+.scene-section { padding: 16px 24px 48px; }
 .scene-wrap {
   position: relative;
   max-width: 960px;
@@ -232,6 +226,7 @@ hr { border: none; border-top: 1px solid var(--border); }
   font-family: 'Fraunces', serif;
   font-size: clamp(30px, 3.5vw, 46px);
   font-weight: 600; line-height: 1.08; letter-spacing: -0.025em; color: #fff; margin-bottom: 14px;
+  font-variation-settings: 'opsz' 72;
 }
 .section h2 em { font-style: italic; color: rgba(255,255,255,0.45); font-weight: 300; }
 .section-body { font-size: 16px; color: var(--muted); line-height: 1.7; }
@@ -330,13 +325,14 @@ hr { border: none; border-top: 1px solid var(--border); }
 .cta-section p { font-size: 17px; color: var(--muted); max-width: 440px; margin: 0 auto 52px; line-height: 1.7; }
 .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 .btn-cta-black {
-  background: #fff; color: #000; padding: 14px 32px; border-radius: 8px;
+  background: var(--accent); color: #fff; padding: 14px 36px; border-radius: 8px;
   font-family: 'DM Sans', sans-serif;
   font-size: 14px; font-weight: 600; text-decoration: none;
-  transition: opacity 0.15s, transform 0.1s, box-shadow 0.2s;
+  transition: filter 0.15s, transform 0.1s, box-shadow 0.2s;
   display: inline-flex; align-items: center; gap: 8px;
+  box-shadow: 0 0 0 1px rgba(91,140,255,0.3), 0 8px 32px rgba(91,140,255,0.35);
 }
-.btn-cta-black:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 8px 28px rgba(255,255,255,0.18); }
+.btn-cta-black:hover { filter: brightness(1.12); transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(91,140,255,0.4), 0 12px 40px rgba(91,140,255,0.5); }
 .btn-cta-outline {
   color: var(--mid); padding: 14px 24px; border-radius: 8px; font-size: 15px;
   text-decoration: none; border: 1px solid var(--border2); transition: all 0.15s;
@@ -573,19 +569,26 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
 .hero-wrap .hero-note { color: rgba(255,255,255,0.34); }
 .hero-wrap .hstat-l { color: rgba(255,255,255,0.42); }
 .hero-wrap .hstat-div { background: rgba(255,255,255,0.14); }
+/* Stats strip: float directly on photo, no glass box */
 .hero-wrap .hero-stats-strip {
-  border-top-color: rgba(255,255,255,0.10);
-  background: rgba(3,6,15,0.35);
-  backdrop-filter: blur(8px);
-  border-radius: 12px;
-  padding: 24px 28px;
-  max-width: 860px; width: 100%;
+  border-top: 1px solid rgba(255,255,255,0.14);
+  background: none;
+  backdrop-filter: none;
+  border-radius: 0;
+  padding: 36px 0 0;
+  max-width: 720px; width: 100%;
   flex-wrap: nowrap;
 }
-.hero-wrap .hstat { padding: 0 22px; }
-.hero-wrap .hstat-l { max-width: 180px; font-size: 11.5px; line-height: 1.45; }
-.hero-wrap .btn-sec { border-color: rgba(255,255,255,0.25); }
-.hero-wrap .btn-sec:hover { border-color: rgba(255,255,255,0.55); }
+.hero-wrap .hstat { padding: 0 28px; }
+.hero-wrap .hstat-n { color: #fff; }
+.hero-wrap .hstat-l { max-width: 160px; font-size: 11px; color: rgba(255,255,255,0.48); line-height: 1.45; }
+.hero-wrap .hstat-div { background: rgba(255,255,255,0.15); }
+/* Secondary CTA: text-only on photo hero */
+.hero-wrap .btn-sec {
+  border: none; padding-left: 4px; padding-right: 4px;
+  color: rgba(255,255,255,0.55);
+}
+.hero-wrap .btn-sec:hover { color: #fff; border-color: transparent; }
 .hero h1 em { color: rgba(255,255,255,0.48); }
 
 /* Gradient hairline divider */
@@ -619,7 +622,8 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
 .vprop p { font-size: 13px; color: var(--muted); line-height: 1.6; }
 
 /* ── WHY / TRUST band ── */
-.why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px; }
+.why-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 24px; margin-top: 56px; }
+.why-card:first-child { padding: 36px 32px; }
 .why-card {
   border: 1px solid var(--border); border-radius: 12px; padding: 30px 28px;
   background: linear-gradient(145deg, var(--card2) 0%, var(--card) 100%);
@@ -627,7 +631,7 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
   display: flex; flex-direction: column; gap: 12px; transition: border-color 0.2s var(--ease), transform 0.2s var(--ease), box-shadow 0.25s var(--ease); }
 .why-card:hover { border-color: var(--border2); transform: translateY(-3px); box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 16px 40px rgba(0,0,0,0.35); }
 .why-kicker { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
-.why-card h3 { font-family: 'Fraunces', serif; font-size: 21px; font-weight: 600; color: #fff; letter-spacing: -0.015em; line-height: 1.2; }
+.why-card h3 { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; color: #fff; letter-spacing: -0.02em; line-height: 1.15; }
 .why-card p { font-size: 13.5px; color: var(--muted); line-height: 1.65; }
 /* determinism mini-proof */
 .det-chip { margin-top: 4px; display: inline-flex; align-items: center; gap: 8px; font-size: 11px; color: var(--st-ahead);
@@ -992,7 +996,6 @@ footer { padding: 52px 24px 40px; }
 
 <!-- 3D BIM SCENE -->
 <div class="scene-section">
-<div class="scene-section-title">The model, live.</div>
 <div class="scene-wrap">
   <canvas id="bim-canvas"></canvas>
 
