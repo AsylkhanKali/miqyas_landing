@@ -839,19 +839,6 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
    CONSTRUCTION ANIMATIONS
    ══════════════════════════════════════════════ */
 
-/* 1 — AI SCAN LINE across BIM canvas */
-.scene-wrap::after {
-  content: ''; position: absolute; left: 0; right: 0; height: 2px; z-index: 4;
-  background: linear-gradient(90deg, transparent 5%, rgba(91,140,255,0.8) 50%, transparent 95%);
-  box-shadow: 0 0 16px rgba(91,140,255,0.55), 0 0 40px rgba(91,140,255,0.18);
-  animation: scanLine 7s ease-in-out infinite; pointer-events: none;
-}
-@keyframes scanLine {
-  0%   { top: -2px; opacity: 0; }
-  4%   { opacity: 1; }
-  92%  { opacity: 0.7; }
-  100% { top: 100%; opacity: 0; }
-}
 
 /* 2 — BLUEPRINT GRID on How It Works */
 #how { position: relative; }
@@ -898,12 +885,9 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
   font-size: 11px; color: var(--st-ahead); letter-spacing: 0.06em;
   margin-top: 6px; overflow: hidden; white-space: nowrap;
   border-left: 2px solid var(--st-ahead); padding-left: 10px;
-  width: 0; animation: tickerReveal 1.8s steps(52) 0.8s both;
+  min-height: 16px;
 }
-@keyframes tickerReveal {
-  from { width: 0; }
-  to   { width: 420px; }
-}
+.why-ticker .tk-cursor { color: var(--st-ahead); animation: cursorBlink 1.1s step-end infinite; }
 
 /* 7 — MEASUREMENT SYMBOLS floating in CTA */
 .cta-float {
@@ -922,12 +906,76 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
 /* 8 — STAT NUMBERS enter animation (CSS side only — numbers start at 0 via JS) */
 .hstat-n { transition: opacity 0.4s ease; }
 
+/* ══ INNOVATIVE ANIMATIONS ══════════════════════════════════════ */
+
+/* Hero h1 drafting reveal — clip-path wipe from left like a blueprint line */
+.hero h1 {
+  animation: draftReveal 1.0s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+.hero h1 em {
+  animation: draftReveal 1.0s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both;
+  display: inline-block;
+}
+@keyframes draftReveal {
+  from { clip-path: inset(0 102% 0 0); opacity: 0.4; }
+  to   { clip-path: inset(0 0% 0 0);   opacity: 1; }
+}
+
+/* Det-chip blinking terminal cursor */
+.det-chip::after {
+  content: '|'; margin-left: 3px;
+  animation: cursorBlink 1.1s step-end infinite;
+  color: var(--gold); font-weight: 300;
+}
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* Section divider Gantt fill — horizontal bar grows from left */
+.div-grad {
+  position: relative; overflow: hidden;
+  opacity: 1 !important;
+  background: rgba(255,255,255,0.05); /* barely visible base */
+  transition: none;
+}
+.div-grad::after { display: none; } /* override existing ◆ diamond */
+.div-grad::before {
+  content: ''; position: absolute; top: 0; left: 0; bottom: 0;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--gold) 60%, transparent);
+  transition: width 1.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.div-grad.div-visible::before { width: 100%; }
+
+/* Pipeline data packet dots — glowing dots race along connectors */
+.pipe-node-conn { position: relative; }
+.pipe-node-conn::before {
+  content: ''; position: absolute; top: -3px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 10px var(--accent), 0 0 20px rgba(91,140,255,0.4);
+  animation: packetTravel 1.6s linear infinite;
+}
+.pipe-node-conn:nth-child(4)::before  { animation-delay: 0.4s; }
+.pipe-node-conn:nth-child(6)::before  { animation-delay: 0.8s; }
+.pipe-node-conn:nth-child(8)::before  { animation-delay: 1.2s; }
+@keyframes packetTravel {
+  0%   { left: -7px; opacity: 0; }
+  8%   { opacity: 1; }
+  88%  { opacity: 0.9; }
+  100% { left: calc(100% + 7px); opacity: 0; }
+}
+
+/* Why ticker — transition for JS-driven cycling */
+.why-ticker { transition: opacity 0.35s ease; }
+
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   * { scroll-behavior: auto !important; }
-  .scene-wrap::after, .why-kicker::before, .cta-float { animation: none !important; }
-  .why-ticker { animation: none; width: auto; }
-  .div-grad { opacity: 0.7 !important; transition: none !important; }
+  .why-kicker::before, .cta-float, .pipe-node-conn::before, .det-chip::after { animation: none !important; }
+  .why-ticker { animation: none; width: auto; transition: none !important; }
+  .div-grad::before { transition: none !important; width: 100% !important; }
+  .hero h1, .hero h1 em { animation: none !important; clip-path: none !important; }
 }
 
 
@@ -1628,6 +1676,41 @@ formEl.addEventListener('submit', async e => {
     }, { threshold: 0.5 }).observe(hr);
   });
 
+  // 6. Living why-ticker — cycles through status readouts
+  var tickerEl = document.querySelector('.why-ticker');
+  if (tickerEl) {
+    var tickerMsgs = [
+      'Analysis complete · 174 elements · 3 deviations flagged · SPI 0.91',
+      'L3 Steel Frame · behind 6 days · Critical path — RFI raised',
+      'Earned Value · CPI 1.04 · EAC $8.4M · VAC −$310K',
+      'L4 Concrete Pour · ahead 2 days · No action required'
+    ];
+    var tickerIdx = 0;
+    function renderTicker() { tickerEl.innerHTML = tickerMsgs[tickerIdx] + ' <span class="tk-cursor">█</span>'; }
+    renderTicker();
+    if (!reducedMotion) {
+      setInterval(function() {
+        tickerEl.style.opacity = '0';
+        setTimeout(function() {
+          tickerIdx = (tickerIdx + 1) % tickerMsgs.length;
+          renderTicker();
+          tickerEl.style.opacity = '1';
+        }, 380);
+      }, 3600);
+    }
+  }
+
+  // 7. Hero photo parallax — drifts upward as you scroll
+  if (!reducedMotion) {
+    var heroWrapEl = document.querySelector('.hero-wrap');
+    window.addEventListener('scroll', function() {
+      var y = window.scrollY;
+      if (heroWrapEl && y < window.innerHeight * 1.4) {
+        heroWrapEl.style.backgroundPositionY = (30 + y * 0.045) + '%';
+      }
+    }, { passive: true });
+  }
+
 })();
 </script>
 
@@ -1806,7 +1889,8 @@ scene.add(found);
 
 // ── CURTAIN WALL helper ──
 const mullionMat = new THREE.MeshStandardMaterial({ color: 0x445060, roughness: 0.45, metalness: 0.65 });
-function addCurtainWall(floorY, status) {
+function addCurtainWall(floorY, status, parent) {
+  parent = parent || scene;
   if (status === 'not_started') return;
   const panelH = FH - 0.45;
   const midY   = floorY - panelH / 2 - 0.12;
@@ -1824,20 +1908,20 @@ function addCurtainWall(floorY, status) {
     // Glass panel
     const gp = new THREE.Mesh(new THREE.BoxGeometry(bayW - 0.12, panelH - 0.1, 0.05), glassMat);
     gp.position.set(bx, midY, D / 2 + 0.1);
-    scene.add(gp);
+    parent.add(gp);
   }
   // Vertical mullions
   for (let mi = 0; mi <= 4; mi++) {
     const mx = -W / 2 + (W / 4) * mi;
     const mul = new THREE.Mesh(new THREE.BoxGeometry(0.07, panelH, 0.07), mullionMat);
     mul.position.set(mx, midY, D / 2 + 0.1);
-    scene.add(mul);
+    parent.add(mul);
   }
   // Transoms (horizontal dividers at 40% and 80% up)
   [0.4, 0.8].forEach(frac => {
     const tr = new THREE.Mesh(new THREE.BoxGeometry(W + 0.1, 0.055, 0.055), mullionMat);
     tr.position.set(0, floorY - panelH * (1 - frac), D / 2 + 0.1);
-    scene.add(tr);
+    parent.add(tr);
   });
 
   // Side face (X = -W/2): 2 bays
@@ -1845,12 +1929,12 @@ function addCurtainWall(floorY, status) {
   [-sideMid / 2, sideMid / 2].forEach(sz => {
     const gp = new THREE.Mesh(new THREE.BoxGeometry(0.05, panelH - 0.1, sideMid - 0.12), glassMat);
     gp.position.set(-W / 2 - 0.1, midY, sz);
-    scene.add(gp);
+    parent.add(gp);
   });
   [-D / 2, 0, D / 2].forEach(sz => {
     const mul = new THREE.Mesh(new THREE.BoxGeometry(0.07, panelH, 0.07), mullionMat);
     mul.position.set(-W / 2 - 0.1, midY, sz);
-    scene.add(mul);
+    parent.add(mul);
   });
 }
 
@@ -1866,10 +1950,14 @@ spotLight.castShadow = false;
 scene.add(spotLight);
 scene.add(spotLight.target);
 
+// Per-floor groups — let each floor's full element set rise together during assembly
+const floorGroups = FLOORS.map(() => { const g = new THREE.Group(); scene.add(g); return g; });
+
 FLOORS.forEach((data, i) => {
   const y = (i + 1) * FH;
   const cfg = STATUS[data.status];
   const floorColor = FLOOR_TONES[i];
+  const fg = floorGroups[i];
 
   // Main slab
   const mat = new THREE.MeshStandardMaterial({
@@ -1885,9 +1973,9 @@ FLOORS.forEach((data, i) => {
   slab.position.set(0, y, 0);
   slab.castShadow = true;
   slab.receiveShadow = true;
-  slab.userData = { ...data, cfg, originalColor: floorColor, isSlab: true };
+  slab.userData = { ...data, cfg, originalColor: floorColor, isSlab: true, floorIndex: i };
   slabs.push(slab);
-  scene.add(slab);
+  fg.add(slab);
 
   // Edge trim
   const trimColor = data.status === 'behind' ? 0xffffff : data.status === 'ahead' ? 0xdddddd
@@ -1897,7 +1985,7 @@ FLOORS.forEach((data, i) => {
     new THREE.MeshBasicMaterial({ color: trimColor, transparent: true, opacity: data.status === 'not_started' ? 0.15 : 0.85 })
   );
   trim.position.set(0, y + 0.16, 0);
-  scene.add(trim);
+  fg.add(trim);
 
   // Spandrel beams (taller, more structural)
   const beamTone = 0x303848 + i * 0x040408;
@@ -1905,21 +1993,21 @@ FLOORS.forEach((data, i) => {
   const bY = y - 0.52;
   [[-D/2], [D/2]].forEach(([z]) => {
     const b = new THREE.Mesh(new THREE.BoxGeometry(W, 0.55, 0.24), beamMat);
-    b.position.set(0, bY, z); scene.add(b);
+    b.position.set(0, bY, z); fg.add(b);
   });
   [[-W/2], [W/2]].forEach(([x]) => {
     const b = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.55, D), beamMat);
-    b.position.set(x, bY, 0); scene.add(b);
+    b.position.set(x, bY, 0); fg.add(b);
   });
   // Interior secondary beams (cross the slab for realism)
   [-W/4, 0, W/4].forEach(bx => {
     const ib = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.38, D), beamMat);
     ib.position.set(bx, bY + 0.08, 0);
-    scene.add(ib);
+    fg.add(ib);
   });
 
   // Curtain wall facade
-  addCurtainWall(y, data.status);
+  addCurtainWall(y, data.status, fg);
 
   // Alert rings — "behind" (amber)
   if (data.status === 'behind') {
@@ -1929,13 +2017,13 @@ FLOORS.forEach((data, i) => {
     );
     r1.position.set(0, y - 0.14, 0);
     r1.userData.isRing = true;
-    scene.add(r1); slabs.push(r1);
+    fg.add(r1); slabs.push(r1);
     const r2 = new THREE.Mesh(
       new THREE.BoxGeometry(W + 2.8, 0.02, D + 2.8),
       new THREE.MeshBasicMaterial({ color: 0xe8a94a, transparent: true, opacity: 0.15 })
     );
     r2.position.set(0, y - 0.14, 0);
-    scene.add(r2);
+    fg.add(r2);
   }
   // Highlight — "ahead" (blue)
   if (data.status === 'ahead') {
@@ -1944,7 +2032,7 @@ FLOORS.forEach((data, i) => {
       new THREE.MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.4 })
     );
     aRing.position.set(0, y + 0.17, 0);
-    scene.add(aRing);
+    fg.add(aRing);
   }
 
   // Progress bar above each slab (width proportional to IoU)
@@ -1956,14 +2044,14 @@ FLOORS.forEach((data, i) => {
       new THREE.MeshBasicMaterial({ color: barColor, transparent: true, opacity: 0.75 })
     );
     bar.position.set(-W / 2 + barW / 2 + 0.5, y + 0.21, D / 2 + 0.4);
-    scene.add(bar);
+    fg.add(bar);
     // Track bg
     const barBg = new THREE.Mesh(
       new THREE.BoxGeometry(W - 1, 0.06, 0.14),
       new THREE.MeshBasicMaterial({ color: 0x1e293b, transparent: true, opacity: 0.6 })
     );
     barBg.position.set(0, y + 0.21, D / 2 + 0.4);
-    scene.add(barBg);
+    fg.add(barBg);
   }
 
   // Wireframe + rebar — "not_started"
@@ -1973,7 +2061,7 @@ FLOORS.forEach((data, i) => {
       new THREE.MeshBasicMaterial({ color: 0x252525, wireframe: true })
     );
     wf.position.set(0, y, 0);
-    scene.add(wf);
+    fg.add(wf);
     // Exposed rebar grid sticking up
     const rebarMat = new THREE.MeshStandardMaterial({ color: 0x1e1e1e, roughness: 0.85, metalness: 0.6 });
     for (let rx = -W/2 + 1; rx < W/2; rx += 1.8) {
@@ -1981,7 +2069,7 @@ FLOORS.forEach((data, i) => {
         const ht = 0.9 + Math.random() * 1.0;
         const rb = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, ht, 5), rebarMat);
         rb.position.set(rx, y + ht / 2, rz);
-        scene.add(rb);
+        fg.add(rb);
       }
     }
     // Ghost curtain wall outlines
@@ -1991,7 +2079,7 @@ FLOORS.forEach((data, i) => {
         new THREE.MeshBasicMaterial({ color: 0x1a1a1a, wireframe: true })
       );
       gp.position.set(bx, y - FH * 0.35, D / 2 + 0.1);
-      scene.add(gp);
+      fg.add(gp);
     });
   }
 });
@@ -2024,7 +2112,7 @@ FLOORS.forEach((data, i) => {
   const y = (i + 1) * FH;
   const sp = makeLabel(data.label, labelColors[data.status]);
   sp.position.set(-W / 2 - 4.8, y + 0.8, 0);
-  scene.add(sp);
+  floorGroups[i].add(sp);
 });
 
 // ── SECOND BUILDING (adjacent, shows neighbouring context) ──
@@ -2422,21 +2510,86 @@ canvas.addEventListener('mouseleave', hideTooltip);
 /* ── ANIMATE ── */
 const clock = new THREE.Clock();
 
+/* ── BUILDING ASSEMBLY ANIMATION ── */
+// Each floor group starts offset below ground, rises to 0 when scene enters view
+const GROUND_OFFSET   = -7;
+const assemblyOffset  = FLOORS.map(() => GROUND_OFFSET); // current y-offset per group
+const assemblyDelays  = FLOORS.map((_, i) => i * 170);   // stagger ms (bottom floor first)
+let   assemblyStarted = false;
+let   assemblyTime    = null;
+let   scanDone        = false;
+let   scanActive      = false;
+let   scanFlash       = FLOORS.map(() => 0);
+
+// Position floor groups underground initially
+floorGroups.forEach((g, i) => { g.position.y = GROUND_OFFSET; });
+
+// Observe scene canvas visibility — trigger assembly once
+const sceneObs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && !assemblyStarted) {
+    assemblyStarted = true;
+    assemblyTime = performance.now();
+  }
+}, { threshold: 0.2 });
+sceneObs.observe(document.querySelector('.scene-wrap'));
+
 (function animate() {
   requestAnimationFrame(animate);
   const t = clock.getElapsedTime();
+  const now = performance.now();
 
-  // Auto-rotate for first 5 seconds
-  if (!userTouched && t < 5) controls.autoRotate = true;
-  else if (!userTouched && t >= 5) { controls.autoRotate = false; userTouched = true; }
+  // Auto-rotate for first 5 seconds (only after assembly begins)
+  if (assemblyStarted && !userTouched && (now - assemblyTime) < 6000) controls.autoRotate = true;
+  else if (!userTouched && assemblyStarted) { controls.autoRotate = false; }
 
   // Slowly rotate crane head
   craneHead.rotation.y = t * 0.08;
 
-  // Pulse "behind" slabs + spotlight intensity
+  // ── BUILDING ASSEMBLY + SCAN CASCADE ──
+  if (assemblyStarted && assemblyTime !== null && !scanDone) {
+    const elapsed = now - assemblyTime;
+    let allSettled = true;
+
+    floorGroups.forEach((g, i) => {
+      if (elapsed < assemblyDelays[i]) { allSettled = false; return; }
+      var diff = 0 - assemblyOffset[i];
+      if (Math.abs(diff) > 0.005) {
+        assemblyOffset[i] += diff * 0.11; // spring lerp toward 0
+        g.position.y = assemblyOffset[i];
+        allSettled = false;
+      } else {
+        assemblyOffset[i] = 0; g.position.y = 0;
+      }
+    });
+
+    // Once all floors settled, fire the bottom-to-top scan cascade
+    if (allSettled && !scanActive) {
+      scanActive = true;
+      FLOORS.forEach((_, i) => {
+        setTimeout(function() { scanFlash[i] = 1.0; }, i * 130);
+        setTimeout(function() { scanFlash[i] = 0;   }, i * 130 + 110);
+      });
+      setTimeout(function() { scanActive = false; scanDone = true; }, FLOORS.length * 130 + 250);
+    }
+  }
+
+  // Pulse "behind" slabs + spotlight + micro-vibration + scan flash
   slabs.forEach(mesh => {
-    if (mesh.userData.status === 'behind' && mesh !== selectedSlab && mesh !== hoveredSlab) {
+    const isBehind = mesh.userData.status === 'behind';
+    const isMain   = mesh.userData.isSlab && !mesh.userData.isRing;
+    if (!isMain) return;
+
+    if (isBehind && mesh !== selectedSlab && mesh !== hoveredSlab) {
       mesh.material.emissiveIntensity = 0.30 + 0.40 * Math.sin(t * 2.8);
+      // Structural stress micro-vibration (local space within the floor group)
+      mesh.position.x = (Math.random() - 0.5) * 0.022 * Math.abs(Math.sin(t * 18));
+      mesh.position.z = (Math.random() - 0.5) * 0.014 * Math.abs(Math.sin(t * 22 + 1.3));
+    }
+
+    // Scan flash cascade overrides emissive briefly
+    if (scanActive && mesh.userData.floorIndex !== undefined) {
+      const f = scanFlash[mesh.userData.floorIndex];
+      if (f > 0) mesh.material.emissiveIntensity = f;
     }
   });
   spotLight.intensity = 3.5 + 2.0 * Math.sin(t * 2.8);
@@ -2445,7 +2598,6 @@ const clock = new THREE.Clock();
   const pos = particles.geometry.attributes.position;
   for (let p = 0; p < PTCL_COUNT; p++) {
     pos.array[p*3+1] += ptclSpeeds[p] * 0.005;
-    // Gentle horizontal drift
     pos.array[p*3]   += Math.sin(t * 0.4 + ptclPhases[p]) * 0.003;
     if (pos.array[p*3+1] > FLOORS.length * FH * 1.2) {
       pos.array[p*3+1] = -0.5;
