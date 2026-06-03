@@ -835,9 +835,99 @@ nav.scrolled { background: rgba(3,6,15,0.94); box-shadow: 0 1px 0 rgba(255,255,2
   .vprops { padding: 0 16px; }
   .lob { grid-template-columns: 52px repeat(6, 1fr); }
 }
+/* ══════════════════════════════════════════════
+   CONSTRUCTION ANIMATIONS
+   ══════════════════════════════════════════════ */
+
+/* 1 — AI SCAN LINE across BIM canvas */
+.scene-wrap::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 2px; z-index: 4;
+  background: linear-gradient(90deg, transparent 5%, rgba(91,140,255,0.8) 50%, transparent 95%);
+  box-shadow: 0 0 16px rgba(91,140,255,0.55), 0 0 40px rgba(91,140,255,0.18);
+  animation: scanLine 7s ease-in-out infinite; pointer-events: none;
+}
+@keyframes scanLine {
+  0%   { top: -2px; opacity: 0; }
+  4%   { opacity: 1; }
+  92%  { opacity: 0.7; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* 2 — BLUEPRINT GRID on How It Works */
+#how { position: relative; }
+#how::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(91,140,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91,140,255,0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0; transition: opacity 3s ease;
+}
+#how .section-label, #how .pipeline { position: relative; z-index: 1; }
+#how h2 { position: relative; z-index: 1; }
+#how.blueprint-on::before { opacity: 1; }
+
+/* 3 — FILE CARD PROGRESS BARS */
+.pfc-progress { height: 2px; background: rgba(255,255,255,0.07); margin-top: 10px; border-radius: 1px; overflow: hidden; }
+.pfc-progress-fill { height: 100%; width: 0%; border-radius: 1px; transition: width 1.4s cubic-bezier(0.25, 1, 0.5, 1); }
+.pipe-file-card:nth-child(1) .pfc-progress-fill { background: var(--gold); }
+.pipe-file-card:nth-child(2) .pfc-progress-fill { background: var(--accent); }
+.pipe-file-card:nth-child(3) .pfc-progress-fill { background: #22c55e; }
+
+/* 4 — PULSING STATUS DOTS on Why kickers */
+.why-kicker { display: inline-flex; align-items: center; gap: 8px; }
+.why-kicker::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  animation: dotPulse 2.2s ease-in-out infinite;
+}
+.why-card:nth-child(1) .why-kicker::before { background: var(--gold); }
+.why-card:nth-child(2) .why-kicker::before { background: var(--accent); animation-delay: 0.7s; }
+.why-card:nth-child(3) .why-kicker::before { background: #22c55e; animation-delay: 1.4s; }
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 currentColor; }
+  50%       { opacity: 0.85; transform: scale(1.15); box-shadow: 0 0 0 5px transparent; }
+}
+
+/* 5 — SECTION DIVIDER arrive on scroll */
+.div-grad { transition: opacity 0.9s ease; opacity: 0; }
+.div-grad.div-visible { opacity: 0.7; }
+
+/* 6 — WHY TICKER — status readout below h2 */
+.why-ticker {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px; color: var(--st-ahead); letter-spacing: 0.06em;
+  margin-top: 6px; overflow: hidden; white-space: nowrap;
+  border-left: 2px solid var(--st-ahead); padding-left: 10px;
+  width: 0; animation: tickerReveal 1.8s steps(52) 0.8s both;
+}
+@keyframes tickerReveal {
+  from { width: 0; }
+  to   { width: 420px; }
+}
+
+/* 7 — MEASUREMENT SYMBOLS floating in CTA */
+.cta-float {
+  position: absolute; font-family: ui-monospace, monospace;
+  color: rgba(91,140,255,0.08); font-size: 14px; font-weight: 400;
+  pointer-events: none; user-select: none;
+  animation: floatUp var(--fd, 12s) var(--fde, 0s) ease-in-out infinite;
+}
+@keyframes floatUp {
+  0%   { transform: translateY(0px) rotate(var(--fr,0deg)); opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 0.7; }
+  100% { transform: translateY(-80px) rotate(var(--fr,0deg)); opacity: 0; }
+}
+
+/* 8 — STAT NUMBERS enter animation (CSS side only — numbers start at 0 via JS) */
+.hstat-n { transition: opacity 0.4s ease; }
+
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   * { scroll-behavior: auto !important; }
+  .scene-wrap::after, .why-kicker::before, .cta-float { animation: none !important; }
+  .why-ticker { animation: none; width: auto; }
+  .div-grad { opacity: 0.7 !important; transition: none !important; }
 }
 
 
@@ -985,11 +1075,11 @@ footer { padding: 52px 24px 40px; }
     <a href="#how" class="btn-sec">How it works</a>
   </div>
   <div class="hero-stats-strip">
-    <div class="hstat"><span class="hstat-n">89%</span><span class="hstat-l">of large projects exceed budget or schedule</span></div>
+    <div class="hstat"><span class="hstat-n" data-target="89" data-suffix="%">0%</span><span class="hstat-l">of large projects exceed budget or schedule</span></div>
     <div class="hstat-div"></div>
-    <div class="hstat"><span class="hstat-n">$1.6T</span><span class="hstat-l">lost annually to productivity gaps globally</span></div>
+    <div class="hstat"><span class="hstat-n" data-target="1.6" data-prefix="$" data-suffix="T">$0T</span><span class="hstat-l">lost annually to productivity gaps globally</span></div>
     <div class="hstat-div"></div>
-    <div class="hstat"><span class="hstat-n">3–5×</span><span class="hstat-l">the cost to fix a deviation caught late vs. early</span></div>
+    <div class="hstat"><span class="hstat-n" data-fixed="3–5×">3–5×</span><span class="hstat-l">the cost to fix a deviation caught late vs. early</span></div>
   </div>
 </div>
 </div><!-- /hero-wrap -->
@@ -1074,16 +1164,19 @@ footer { padding: 52px 24px 40px; }
               <div class="pfc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/></svg></div>
               <div class="pfc-info"><div class="pfc-name">Video footage</div><div class="pfc-meta">360° walkthrough, any camera</div></div>
               <div class="pfc-badge in">INPUT</div>
+              <div class="pfc-progress"><div class="pfc-progress-fill"></div></div>
             </div>
             <div class="pipe-file-card">
               <div class="pfc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
               <div class="pfc-info"><div class="pfc-name">BIM / IFC model</div><div class="pfc-meta">Your existing Revit or ArchiCAD model</div></div>
               <div class="pfc-badge in">INPUT</div>
+              <div class="pfc-progress"><div class="pfc-progress-fill"></div></div>
             </div>
             <div class="pipe-file-card">
               <div class="pfc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
               <div class="pfc-info"><div class="pfc-name">P6 Schedule</div><div class="pfc-meta">XER or XML, any version</div></div>
               <div class="pfc-badge in">INPUT</div>
+              <div class="pfc-progress"><div class="pfc-progress-fill"></div></div>
             </div>
           </div>
         </div>
@@ -1165,7 +1258,8 @@ footer { padding: 52px 24px 40px; }
     <div class="section-narrow" style="margin-bottom:0">
       <div class="section-label">Why Miqyas</div>
       <h2>Not a black box.<br><em>A measurement.</em></h2>
-      <p class="section-body">Most tools give you photos and a score. Miqyas gives you a number tied to your model, reproducible on demand, written in terms your PM and your lender already understand.</p>
+      <div class="why-ticker">Analysis complete · 174 elements · 3 deviations flagged · SPI 0.91</div>
+      <p class="section-body" style="margin-top:16px">Most tools give you photos and a score. Miqyas gives you a number tied to your model, reproducible on demand, written in terms your PM and your lender already understand.</p>
     </div>
     <div class="why-grid">
       <div class="why-card reveal">
@@ -1197,7 +1291,7 @@ footer { padding: 52px 24px 40px; }
       <h2>Under<br><em>the hood.</em></h2>
     </div>
     <div class="features">
-      <div class="feature">
+      <div class="feature reveal">
         <div class="feat-left">
           <span class="feat-num">01</span>
           <div class="feat-ic-title">
@@ -1207,7 +1301,7 @@ footer { padding: 52px 24px 40px; }
         </div>
         <p>Computer vision identifies elements across 13 construction categories. IoU scoring flags behind, ahead, and not-started elements automatically — no manual annotations needed.</p>
       </div>
-      <div class="feature">
+      <div class="feature reveal d1">
         <div class="feat-left">
           <span class="feat-num">02</span>
           <div class="feat-ic-title">
@@ -1217,7 +1311,7 @@ footer { padding: 52px 24px 40px; }
         </div>
         <p>Deviations cross-referenced with your P6 schedule. A slip on a float-rich element is noise. The same slip on the core wall is a crisis. We tell you which is which.</p>
       </div>
-      <div class="feature">
+      <div class="feature reveal d2">
         <div class="feat-left">
           <span class="feat-num">03</span>
           <div class="feat-ic-title">
@@ -1227,7 +1321,7 @@ footer { padding: 52px 24px 40px; }
         </div>
         <p>Real IFC geometry rendered in the browser — not bounding boxes. Click any element to see its IoU score, deviation status, and linked schedule activity.</p>
       </div>
-      <div class="feature">
+      <div class="feature reveal d3">
         <div class="feat-left">
           <span class="feat-num">04</span>
           <div class="feat-ic-title">
@@ -1276,6 +1370,12 @@ footer { padding: 52px 24px 40px; }
 
 <!-- CTA -->
 <div class="cta-section">
+  <span class="cta-float" style="left:8%;bottom:20%;--fd:14s;--fde:0s;--fr:-12deg">+</span>
+  <span class="cta-float" style="left:18%;bottom:35%;--fd:11s;--fde:2s;--fr:6deg">×</span>
+  <span class="cta-float" style="left:72%;bottom:25%;--fd:13s;--fde:1s;--fr:3deg">—</span>
+  <span class="cta-float" style="left:82%;bottom:40%;--fd:16s;--fde:4s;--fr:-8deg">+</span>
+  <span class="cta-float" style="left:88%;bottom:18%;--fd:10s;--fde:3s;--fr:10deg">%</span>
+  <span class="cta-float" style="left:55%;bottom:12%;--fd:12s;--fde:5s;--fr:-4deg">∆</span>
   <h2>Your project,<br><em>measured.</em></h2>
   <p>The pilot runs on a complete project — real IFC model, real schedule, real deviation analysis. No setup. We configure it with you.</p>
   <div class="cta-btns">
@@ -1448,6 +1548,86 @@ formEl.addEventListener('submit', async e => {
       if (!isOpen) item.classList.add('open');
     });
   });
+
+  // ─── CONSTRUCTION ANIMATIONS ───────────────────────────────────────
+
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 1. Hero stat counter
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+  function countUp(el, target, prefix, suffix, duration, isFloat) {
+    if (reducedMotion) { el.textContent = prefix + (isFloat ? target.toFixed(1) : target) + suffix; return; }
+    var start = performance.now();
+    function step(now) {
+      var p = Math.min((now - start) / duration, 1);
+      var val = easeOutCubic(p) * target;
+      el.textContent = prefix + (isFloat ? val.toFixed(1) : Math.floor(val)) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = prefix + (isFloat ? target.toFixed(1) : target) + suffix;
+    }
+    requestAnimationFrame(step);
+  }
+  window.addEventListener('load', function() {
+    document.querySelectorAll('.hstat-n[data-target]').forEach(function(el) {
+      var target = parseFloat(el.dataset.target);
+      var prefix = el.dataset.prefix || '';
+      var suffix = el.dataset.suffix || '';
+      var isFloat = el.dataset.target.indexOf('.') !== -1;
+      setTimeout(function() { countUp(el, target, prefix, suffix, 1800, isFloat); }, 400);
+    });
+    // fixed stat: just fade in
+    document.querySelectorAll('.hstat-n[data-fixed]').forEach(function(el) {
+      el.style.opacity = '0';
+      setTimeout(function() { el.style.opacity = '1'; }, 1200);
+    });
+  });
+
+  // 2. Blueprint grid on How It Works
+  var howEl = document.getElementById('how');
+  if (howEl && !reducedMotion) {
+    new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) howEl.classList.add('blueprint-on');
+    }, { threshold: 0.1 }).observe(howEl);
+  } else if (howEl) { howEl.classList.add('blueprint-on'); }
+
+  // 3. File card progress bars — trigger when Step 1 enters view
+  var step1 = document.querySelector('.pipe-step');
+  if (step1) {
+    new IntersectionObserver(function(entries) {
+      if (!entries[0].isIntersecting) return;
+      var fills = step1.querySelectorAll('.pfc-progress-fill');
+      fills.forEach(function(fill, i) {
+        setTimeout(function() { fill.style.width = '100%'; }, i * 500);
+      });
+    }, { threshold: 0.3 }).observe(step1);
+  }
+
+  // 4. Pipeline step number roll animation
+  document.querySelectorAll('.pipe-step').forEach(function(step) {
+    var numEl = step.querySelector('.pipe-step-num');
+    if (!numEl) return;
+    var finalVal = parseInt(numEl.textContent, 10);
+    if (isNaN(finalVal) || reducedMotion) return;
+    new IntersectionObserver(function(entries, obs) {
+      if (!entries[0].isIntersecting) return;
+      obs.disconnect();
+      numEl.textContent = '00';
+      var cur = 0;
+      var iv = setInterval(function() {
+        cur++;
+        numEl.textContent = (cur < 10 ? '0' : '') + cur;
+        if (cur >= finalVal) { clearInterval(iv); numEl.textContent = (finalVal < 10 ? '0' : '') + finalVal; }
+      }, 80);
+    }, { threshold: 0.25 }).observe(step);
+  });
+
+  // 5. Section divider visibility
+  document.querySelectorAll('.div-grad').forEach(function(hr) {
+    new IntersectionObserver(function(entries, obs) {
+      if (entries[0].isIntersecting) { hr.classList.add('div-visible'); obs.disconnect(); }
+    }, { threshold: 0.5 }).observe(hr);
+  });
+
 })();
 </script>
 
